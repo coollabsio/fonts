@@ -6,7 +6,6 @@ const domain = process.env.DOMAIN
 const server = fastify()
 
 const data = await got.get(`https://google-webfonts-helper.herokuapp.com/api/fonts/`).json()
-
 const subsets = {
   devanagari: {
     'unicode-range': 'U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB'
@@ -21,7 +20,7 @@ const subsets = {
     'unicode-range': 'U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB'
   },
   cyrillic: {
-    ' unicode-range': 'U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116'
+    'unicode-range': 'U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116'
   },
   'cyrillic-ext': {
     'unicode-range': 'U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F'
@@ -59,7 +58,6 @@ server.get('/css2', async (request, reply) => {
       family = family.split(':')[0]
       const properties = data.find(f => f.id === dashFamily)
       for (let weight of weights) {
-
         for (const subset of properties?.subsets) {
           if (weight.includes(',')) {
             style = weight.split(',')[0] === '0' ? 'normal' : 'italic'
