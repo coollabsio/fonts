@@ -1,8 +1,8 @@
 # Privacy-focused Google Fonts CDN alternative
 
 I written it in a hour, so please report bugs [here](https://github.com/coollabsio/fonts/issues/new).
-There are several improvements could be done here and thegre, so if you have any suggestions, do not hesitate to contact me.
 
+There are several improvements could be done here and thegre, so if you have any suggestions, do not hesitate to [contact me](https://docs.coollabs.io/contact).
 
 ## Why?
 
@@ -12,10 +12,8 @@ So I decided to create a similar service just without logging ANYTHING.
 
 
 ## Components
-- The API is a simple http server (written in Node.js/Fastify), that is open sourced and does not log anything, hosted with a [coolify](https://coolify.io) instance.
+- The API is a simple http server (written in Node.js, [Fastify](https://fastify.io)), that is open sourced and does not log anything, hosted with a [coolify](https://coolify.io) instance at [Hetzner](https://hetzner.com).
 - Fonts are served from [BunnyCDN](https://bunny.net), that has an option to completely disable logging on their side.
-
-
 
 ## How to use?
 

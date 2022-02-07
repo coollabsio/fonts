@@ -1,5 +1,8 @@
 import fastify from 'fastify'
 import got from 'got'
+import 'dotenv/config'
+
+const domain = process.env.DOMAIN
 const server = fastify()
 
 const data = await got.get(`https://google-webfonts-helper.herokuapp.com/api/fonts/`).json()
@@ -69,7 +72,7 @@ server.get('/css2', async (request, reply) => {
   font-style: ${style};
   font-weight: ${weight};
   ${display ? 'font-display: swap;' : 'font-display: auto;'}
-  src: url(https://fontscdn.coollabs.io/${dashFamily}/${style}/${weight}.woff2) format('woff2');
+  src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
   unicode-range: ${subsets[subset]['unicode-range']};
 }
 `)
