@@ -9,11 +9,6 @@ There have been several GDPR issues popping up lately with Google & Google CDN. 
 
 So I decided to create a similar service just without logging ANYTHING.
 
-
-## Components
-- The API is a simple HTTP server (written in Node.js/[Fastify](https://fastify.io)), that is open-sourced and does not log anything, hosted with a [coolify](https://coolify.io) instance on a [Hetzner](https://hetzner.com) server.
-- Fonts are served from [BunnyCDN](https://bunny.net), which has an option to disable logging on their side completely.
-
 ## How to use?
 
 Currently, it only supports the css2 [API endpoint](https://developers.google.com/fonts/docs/css2).
@@ -51,3 +46,6 @@ To:
 </style>
 ```
 
+## Stack
+- The API is a simple HTTP server (written in Node.js/[Fastify](https://fastify.io)), that is open-sourced and does not log anything, hosted with a [coolify](https://coolify.io) instance on a [Hetzner](https://hetzner.com) server.
+- Fonts are served from [BunnyCDN](https://bunny.net), which has an option to disable logging on their side completely.
