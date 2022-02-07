@@ -28,7 +28,7 @@ Original `<head>` content:
 
 Replaced `<head>` content:
 ```html
-<link rel="preconnect" href="https://fontsapi.coollabs.io" crossorigin>
+<link rel="preconnect" href="https://api.fonts.coollabs.io" crossorigin>
 <link href="https://api.fonts.coollabs.io/css2?family=Roboto&display=swap" rel="stylesheet">
 ```
 
