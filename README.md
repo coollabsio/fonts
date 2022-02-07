@@ -11,9 +11,7 @@ So I decided to create a similar service just without logging ANYTHING.
 
 ## How to use?
 
-Currently, it only supports the css2 [API endpoint](https://developers.google.com/fonts/docs/css2).
-
-Just change the domain name from `fonts.googleapis.com` to `api.fonts.coollabs.io` in your `<head>` tag; that's it!
+Change the domain name from `fonts.googleapis.com` to `api.fonts.coollabs.io` in your `<head>` tag; that's it!
 
 Example:
 
@@ -45,6 +43,8 @@ To:
 @import url('https://api.fonts.coollabs.io/css2?family=Roboto&display=swap');
 </style>
 ```
+
+Currently, it only supports the css2 [API endpoint](https://developers.google.com/fonts/docs/css2).
 
 ## Stack
 - The API is a simple HTTP server (written in Node.js/[Fastify](https://fastify.io)), that is open-sourced and does not log anything, hosted with a [coolify](https://coolify.io) instance on a [Hetzner](https://hetzner.com) server.
