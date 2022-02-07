@@ -2,12 +2,13 @@ import fastify from 'fastify'
 import got from 'got'
 import 'dotenv/config'
 import fs from 'fs/promises'
+import etag from 'fastify-etag'
 const domain = process.env.DOMAIN
 const server = fastify()
 
 const data = await got.get(`https://google-webfonts-helper.herokuapp.com/api/fonts/`).json()
 const subsets = JSON.parse(await fs.readFile('./subsets.json', 'utf8'))
-
+server.register(etag)
 server.get('/', (response, reply) => {
   reply.redirect('https://fonts.coollabs.io')
 })
