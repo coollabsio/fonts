@@ -51,9 +51,9 @@ server.get('/css2', async (request, reply) => {
         }
       }
     }
-    reply.raw.writeHead(200, { 'Content-Type': 'text/css;charset=UTF-8' })
-    reply.raw.write(payload.join(' ').trim())
-    return reply.raw.end()
+    reply.header('content-type', 'text/css')
+    reply.send(payload.join(' ').trim())
+    return reply.end()
   } else {
     throw { statusCode: 500, message: 'Wrong request' }
   }
