@@ -3,8 +3,6 @@
 I wrote it in an hour, so please report bugs [here](https://github.com/coollabsio/fonts/issues/new).
 Several improvements could be made here and there, so do not hesitate to [contact me](https://docs.coollabs.io/contact). if you have any suggestions.
 
-Note: The API responses are not cached or distributed (yet, but it will be!), so it depends on the server location I'm using (located Helsinki).
-
 ## Why?
 
 There have been several GDPR issues popping up lately with Google & Google CDN. We don't know what they are doing with user details, such as IP address, browser agent, etc.
