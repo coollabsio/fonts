@@ -5,6 +5,8 @@ Several improvements could be made here and there, so do not hesitate to [contac
 
 [Latency test](https://latency.apex.sh/?url=https%3A%2F%2Fapi.fonts.coollabs.io%2Fcss2%3Ffamily%3DRoboto%26display%3Dswap&compare=https%3A%2F%2Ffonts.googleapis.com%2Fcss2%3Ffamily%3DRoboto%26display%3Dswap)
 
+(The colorful is my API, the grey is Google's API)
+
 ## Why?
 
 There have been several GDPR issues popping up lately with Google & Google CDN. We don't know what they are doing with user details, such as IP address, browser agent, etc.
