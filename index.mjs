@@ -37,17 +37,19 @@ server.get('/css2', async (request, reply) => {
             style = weight.split(',')[0] === '0' ? 'normal' : 'italic'
           }
           weight = weight.includes(',') ? weight.split(',')[1] : weight
-          payload.push(`
+          let css = `
 /* ${subset} */
 @font-face {
   font-family: '${family}';
   font-style: ${style};
-  font-weight: ${weight};
-  ${display ? 'font-display: swap;' : 'font-display: auto;'}
+  font-weight: ${weight};`
+          if (display) css += `
+  font-display: swap;`
+          css += `
   src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
   unicode-range: ${subsets[subset]};
-}
-`)
+}`
+          payload.push(css)
         }
       }
     }
