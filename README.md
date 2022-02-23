@@ -1,4 +1,4 @@
-# Privacy-focused Google Fonts CDN alternative
+# A privacy-friendly drop-in replacement for Google Fonts
 
 I wrote it in an hour, so please report bugs [here](https://github.com/coollabsio/fonts/issues/new).
 Several improvements could be made here and there, so do not hesitate to [contact me](https://docs.coollabs.io/contact). if you have any suggestions.
