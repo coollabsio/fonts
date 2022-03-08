@@ -53,7 +53,7 @@ Currently, it only supports the css2 [API endpoint](https://developers.google.co
 
 ### Icons
 
-Currently, Material Icons supported.
+Currently, [Material Icons](https://fonts.google.com/icons) is supported.
 
 Original `<head>` content:
 ```html
