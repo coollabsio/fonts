@@ -12,6 +12,34 @@ server.register(etag)
 server.get('/', (response, reply) => {
   reply.redirect('https://fonts.coollabs.io')
 })
+server.get('/icon', async (request, reply) => {
+  const css = `/* fallback */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://cdn.fonts.coollabs.io/icons/material-icons/v125.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}`
+reply.header('content-type', 'text/css')
+reply.send(css)
+return reply.end()
+})
 server.get('/css2', async (request, reply) => {
   let { family: families, display } = request.query
   if (families) {
@@ -64,6 +92,7 @@ server.get('/css2', async (request, reply) => {
 
 try {
   await server.listen(3000, '0.0.0.0')
+  console.log(`Server listening on http://0.0.0.0:${server.server.address().port}`)
 } catch (err) {
   server.log.error(err)
   process.exit(1)
