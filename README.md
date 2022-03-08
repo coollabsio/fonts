@@ -15,6 +15,7 @@ So I decided to create a similar service just without logging ANYTHING.
 
 ## How to use?
 
+### Fonts
 Change the domain name from `fonts.googleapis.com` to `api.fonts.coollabs.io` in your `<head>` tag; that's it!
 
 Example:
@@ -49,6 +50,23 @@ To:
 ```
 
 Currently, it only supports the css2 [API endpoint](https://developers.google.com/fonts/docs/css2).
+
+### Icons
+
+Currently, Material Icons supported.
+
+Original `<head>` content:
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+```
+
+Replaced `<head>` content:
+```html
+<link rel="preconnect" href="https://api.fonts.coollabs.io" crossorigin>
+<link href="https://api.fonts.coollabs.io/icon?family=Material+Icons" rel="stylesheet">
+```
 
 ## Stack
 - The API is a simple HTTP server (written in Node.js/[Fastify](https://fastify.io)), that is open-sourced and does not log anything, hosted with a [coolify](https://coolify.io) instance on a [Hetzner](https://hetzner.com) server.
