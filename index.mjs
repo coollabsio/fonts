@@ -83,13 +83,11 @@ server.get('/css2', async (request, reply) => {
         }
       }
       reply.header('content-type', 'text/css')
-      reply.send(payload.join(' ').trim())
-      return reply.end()
+      return reply.send(payload.join(' ').trim())
     } else {
       throw { statusCode: 500, message: 'Wrong request' }
     }
   } catch(error) {
-    console.log(error)
     throw { statusCode: 500, message: error.message }
   }
  
