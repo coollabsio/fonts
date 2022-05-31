@@ -41,52 +41,58 @@ reply.send(css)
 return reply.end()
 })
 server.get('/css2', async (request, reply) => {
-  let { family: families, display } = request.query
-  if (families) {
-    if (typeof families === 'string') {
-      families = [families]
-    }
-    const payload = []
-    for (let family of families) {
-      let style = 'normal'
-      let weights = ['400']
-
-      let dashFamily = family.toLowerCase().replace(/ /g, '-')
-      if (family.includes('wght')) {
-        weights = family.split(':')[1].split('@')[1].split(';').filter(n => n)
-        dashFamily = family.toLowerCase().replace(/ /g, '-').split(':')[0]
+  try {
+    let { family: families, display } = request.query
+    if (families) {
+      if (typeof families === 'string') {
+        families = [families]
       }
-
-      family = family.split(':')[0]
-      const properties = data.find(f => f.id === dashFamily)
-      for (let weight of weights) {
-        for (const subset of properties?.subsets) {
-          if (weight.includes(',')) {
-            style = weight.split(',')[0] === '0' ? 'normal' : 'italic'
+      const payload = []
+      for (let family of families) {
+        let style = 'normal'
+        let weights = ['400']
+  
+        let dashFamily = family.toLowerCase().replace(/ /g, '-')
+        if (family.includes('wght') || family.includes('ital')) {
+          weights = family.split(':')[1].split('@')[1].split(';').filter(n => n)
+          dashFamily = family.toLowerCase().replace(/ /g, '-').split(':')[0]
+        }
+  
+        family = family.split(':')[0]
+        const properties = data.find(f => f.id === dashFamily)
+        for (let weight of weights) {
+          for (const subset of properties?.subsets) {
+            if (weight.includes(',')) {
+              style = weight.split(',')[0] === '0' ? 'normal' : 'italic'
+            }
+            weight = weight.includes(',') ? weight.split(',')[1] : weight
+            let css = `
+  /* ${subset} */
+  @font-face {
+    font-family: '${family}';
+    font-style: ${style};
+    font-weight: ${weight};`
+            if (display) css += `
+    font-display: swap;`
+            css += `
+    src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
+    unicode-range: ${subsets[subset]};
+  }`
+            payload.push(css)
           }
-          weight = weight.includes(',') ? weight.split(',')[1] : weight
-          let css = `
-/* ${subset} */
-@font-face {
-  font-family: '${family}';
-  font-style: ${style};
-  font-weight: ${weight};`
-          if (display) css += `
-  font-display: swap;`
-          css += `
-  src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
-  unicode-range: ${subsets[subset]};
-}`
-          payload.push(css)
         }
       }
+      reply.header('content-type', 'text/css')
+      reply.send(payload.join(' ').trim())
+      return reply.end()
+    } else {
+      throw { statusCode: 500, message: 'Wrong request' }
     }
-    reply.header('content-type', 'text/css')
-    reply.send(payload.join(' ').trim())
-    return reply.end()
-  } else {
-    throw { statusCode: 500, message: 'Wrong request' }
+  } catch(error) {
+    console.log(error)
+    throw { statusCode: 500, message: error.message }
   }
+ 
 
 })
 
