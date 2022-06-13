@@ -1,4 +1,5 @@
+package-lock.json
 node_modules
+*.js
 .env
 /fonts/*
-package-lock.json
