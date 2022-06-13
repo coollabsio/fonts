@@ -1,8 +1,8 @@
 {
   "name": "fonts",
+  "main": "index.ts",
   "version": "1.0.0",
   "description": "A privacy-friendly drop-in replacement for Google Fonts",
-  "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts",
     "dev": "nodemon index.js",
@@ -13,11 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "css": "^3.0.0",
+    "got": "^11.8.3",
     "dotenv": "^16.0.0",
     "fastify": "^3.27.1",
     "fastify-cors": "^6.0.2",
-    "fastify-etag": "^2.1.0",
-    "got": "^11.8.3"
+    "fastify-etag": "^2.1.0"
   },
   "devDependencies": {
     "@types/css": "^0.0.33",
