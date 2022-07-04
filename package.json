@@ -1,24 +1,24 @@
 {
-  "name": "fonts",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "coollabs-fonts",
+  "version": "1.1.0",
+  "description": "A privacy-friendly drop-in replacement for Google Fonts",
+  "main": "index.mjs",
   "scripts": {
     "dev": "nodemon index.mjs",
     "start": "node index.mjs"
   },
   "type": "module",
-  "author": "",
-  "license": "ISC",
+  "author": "Andras Bacsai",
+  "license": "AGPL-3.0",
   "dependencies": {
-    "css": "^3.0.0",
-    "dotenv": "^16.0.0",
-    "fastify": "^3.27.1",
-    "fastify-cors": "^6.0.2",
-    "fastify-etag": "^2.1.0",
-    "got": "^12.0.1"
+    "css": "3.0.0",
+    "dotenv": "16.0.1",
+    "fastify": "4.2.0",
+    "fastify-cors": "6.1.0",
+    "@fastify/etag": "4.0.0",
+    "got": "12.1.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "2.0.18"
   }
 }

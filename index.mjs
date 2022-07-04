@@ -2,7 +2,7 @@ import fastify from 'fastify'
 import got from 'got'
 import 'dotenv/config'
 import fs from 'fs/promises'
-import etag from 'fastify-etag'
+import etag from '@fastify/etag'
 const domain = process.env.DOMAIN
 const server = fastify()
 
@@ -36,9 +36,9 @@ server.get('/icon', async (request, reply) => {
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }`
-reply.header('content-type', 'text/css')
-reply.send(css)
-return reply.end()
+  reply.header('content-type', 'text/css')
+  reply.send(css)
+  return reply.end()
 })
 server.get('/css2', async (request, reply) => {
   try {
@@ -51,33 +51,43 @@ server.get('/css2', async (request, reply) => {
       for (let family of families) {
         let style = 'normal'
         let weights = ['400']
-  
+
         let dashFamily = family.toLowerCase().replace(/ /g, '-')
         if (family.includes('wght') || family.includes('ital')) {
           weights = family.split(':')[1].split('@')[1].split(';').filter(n => n)
+          console.log(weights)
           dashFamily = family.toLowerCase().replace(/ /g, '-').split(':')[0]
         }
-  
+
         family = family.split(':')[0]
         const properties = data.find(f => f.id === dashFamily)
         for (let weight of weights) {
           for (const subset of properties?.subsets) {
             if (weight.includes(',')) {
               style = weight.split(',')[0] === '0' ? 'normal' : 'italic'
+              weight = weight.split(',')[1]
+            } else {
+              if (weight === '0') {
+                style = 'normal'
+                weight = '400'
+              }
+              if (weight === '1') {
+                style = 'italic'
+                weight = '400'
+              }
             }
-            weight = weight.includes(',') ? weight.split(',')[1] : weight
             let css = `
-  /* ${subset} */
-  @font-face {
-    font-family: '${family}';
-    font-style: ${style};
-    font-weight: ${weight};`
+/* ${subset} */
+@font-face {
+  font-family: '${family}';
+  font-style: ${style};
+  font-weight: ${weight};`
             if (display) css += `
-    font-display: swap;`
+  font-display: swap;`
             css += `
-    src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
-    unicode-range: ${subsets[subset]};
-  }`
+  src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
+  unicode-range: ${subsets[subset]};
+}`
             payload.push(css)
           }
         }
@@ -87,15 +97,15 @@ server.get('/css2', async (request, reply) => {
     } else {
       throw { statusCode: 500, message: 'Wrong request' }
     }
-  } catch(error) {
+  } catch (error) {
     throw { statusCode: 500, message: error.message }
   }
- 
+
 
 })
 
 try {
-  await server.listen(3000, '0.0.0.0')
+  await server.listen({ port: 3000, host: '0.0.0.0' })
   console.log(`Server listening on http://0.0.0.0:${server.server.address().port}`)
 } catch (err) {
   server.log.error(err)
