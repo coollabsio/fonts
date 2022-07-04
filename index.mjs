@@ -55,7 +55,6 @@ server.get('/css2', async (request, reply) => {
         let dashFamily = family.toLowerCase().replace(/ /g, '-')
         if (family.includes('wght') || family.includes('ital')) {
           weights = family.split(':')[1].split('@')[1].split(';').filter(n => n)
-          console.log(weights)
           dashFamily = family.toLowerCase().replace(/ /g, '-').split(':')[0]
         }
 
