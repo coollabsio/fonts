@@ -10,6 +10,9 @@ const data = await got.get(`https://google-webfonts-helper.herokuapp.com/api/fon
 const subsets = JSON.parse(await fs.readFile('./subsets.json', 'utf8'))
 server.register(etag)
 server.get('/', (response, reply) => {
+  if (process.env.NODE_ENV === 'development') {
+    return reply.code(200).send('Hello from DEV.')
+  }
   reply.redirect('https://fonts.coollabs.io')
 })
 server.get('/icon', async (request, reply) => {

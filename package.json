@@ -1,11 +1,11 @@
 {
   "name": "coollabs-fonts",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A privacy-friendly drop-in replacement for Google Fonts",
   "main": "index.mjs",
   "scripts": {
-    "dev": "nodemon index.mjs",
-    "start": "node index.mjs"
+    "dev": "NODE_ENV=development nodemon index.mjs",
+    "start": "NODE_ENV=production node index.mjs"
   },
   "type": "module",
   "author": "Andras Bacsai",
