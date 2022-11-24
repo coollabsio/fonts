@@ -49,7 +49,7 @@ To:
 </style>
 ```
 
-Currently, it only supports the css2 [API endpoint](https://developers.google.com/fonts/docs/css2).
+Supports css2 [API endpoint](https://developers.google.com/fonts/docs/css2) and css [API endpoint](https://developers.google.com/fonts/docs/getting_started) as well.
 
 ### Icons
 
