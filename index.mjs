@@ -169,6 +169,7 @@ server.get("/css2", async (request, reply) => {
                   weight = "400";
                 }
               }
+              console.log({ weight });
               let css = `
   /* ${subset} */
   @font-face {
@@ -196,6 +197,7 @@ server.get("/css2", async (request, reply) => {
       throw { statusCode: 500, message: "Wrong request" };
     }
   } catch (error) {
+    console.log(error);
     if (typeof error === "string") {
       reply.header("content-type", "text/html");
       throw error;
