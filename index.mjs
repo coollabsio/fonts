@@ -131,6 +131,7 @@ server.get("/css", async (request, reply) => {
 });
 server.get("/css2", async (request, reply) => {
   try {
+    console.log(request.query);
     let { family: families, display } = request.query;
     if (families) {
       if (typeof families === "string") {
