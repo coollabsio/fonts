@@ -4,6 +4,9 @@ import "dotenv/config";
 import fs from "fs/promises";
 import etag from "@fastify/etag";
 const domain = process.env.DOMAIN ?? "localhost";
+if (!domain) {
+  throw new Error("Please set DOMAIN in .env file.");
+}
 const server = fastify();
 const base = "gwfh.mranftl.com";
 const data = await got.get(`https://${base}/api/fonts/`).json();

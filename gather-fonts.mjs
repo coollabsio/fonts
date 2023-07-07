@@ -51,7 +51,7 @@ for (const subset of Array.from(subsets)) {
 await fs.writeFile("./subsets.json", JSON.stringify(allSubsets));
 
 // Upload fonts to BunnyCDN
-if (process.env.BUNNYCDN_ACCESS_KEY) {
+if (process.env.BUNNY_API_KEY) {
   for (const family of families) {
     console.log("Doing: ", family);
     const { variants } = await got
@@ -59,7 +59,7 @@ if (process.env.BUNNYCDN_ACCESS_KEY) {
       .json();
     for (const variant of variants) {
       const id = variant.fontWeight;
-      const dir = `./${family}/${variant.fontStyle}/`;
+      const dir = `./${family}/${variant.fontStyle}`;
       try {
         await pipeline(
           got.stream(`${variant.woff2}`),
@@ -67,7 +67,7 @@ if (process.env.BUNNYCDN_ACCESS_KEY) {
             `https://storage.bunnycdn.com/${storageZoneName}/${dir}/${id}.woff2`,
             {
               headers: {
-                AccessKey: process.env.BUNNYCDN_ACCESS_KEY,
+                AccessKey: process.env.BUNNY_API_KEY,
               },
             }
           ),
