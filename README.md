@@ -22,15 +22,15 @@ Example:
 
 Original `<head>` content:
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
 ```
 
 Replaced `<head>` content:
 ```html
-<link rel="preconnect" href="https://api.fonts.coollabs.io" crossorigin>
-<link href="https://api.fonts.coollabs.io/css2?family=Roboto&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://api.fonts.coollabs.io" crossorigin />
+<link href="https://api.fonts.coollabs.io/css2?family=Roboto&display=swap" rel="stylesheet" />
 ```
 
 Or with `@import`:
@@ -57,15 +57,15 @@ Currently, [Material Icons](https://fonts.google.com/icons) is supported.
 
 Original `<head>` content:
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 ```
 
 Replaced `<head>` content:
 ```html
-<link rel="preconnect" href="https://api.fonts.coollabs.io" crossorigin>
-<link href="https://api.fonts.coollabs.io/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preconnect" href="https://api.fonts.coollabs.io" crossorigin />
+<link href="https://api.fonts.coollabs.io/icon?family=Material+Icons" rel="stylesheet" />
 ```
 
 ## Stack
