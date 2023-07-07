@@ -150,7 +150,7 @@ server.get("/css2", async (request, reply) => {
             .filter((n) => n);
           dashFamily = family.toLowerCase().replace(/ /g, "-")?.split(":")[0];
         }
-        console.log({ weights, family });
+        console.log({ weights, family, families, dashFamily });
         family = family.split(":")[0];
         const properties = data.find((f) => f.id === dashFamily);
         if (weights && weights.length > 0) {
