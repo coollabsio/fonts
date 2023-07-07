@@ -131,7 +131,6 @@ server.get("/css", async (request, reply) => {
 });
 server.get("/css2", async (request, reply) => {
   try {
-    console.log(request.query);
     let { family: families, display } = request.query;
     if (families) {
       if (typeof families === "string") {
@@ -151,7 +150,6 @@ server.get("/css2", async (request, reply) => {
             .filter((n) => n);
           dashFamily = family.toLowerCase().replace(/ /g, "-")?.split(":")[0];
         }
-        console.log({ weights, family, families, dashFamily });
         family = family.split(":")[0];
         const properties = data.find((f) => f.id === dashFamily);
         if (weights && weights.length > 0) {
@@ -197,7 +195,6 @@ server.get("/css2", async (request, reply) => {
       throw { statusCode: 500, message: "Wrong request" };
     }
   } catch (error) {
-    console.log(error);
     if (typeof error === "string") {
       reply.header("content-type", "text/html");
       throw error;
