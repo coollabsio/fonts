@@ -150,7 +150,7 @@ server.get("/css2", async (request, reply) => {
             .filter((n) => n);
           dashFamily = family.toLowerCase().replace(/ /g, "-")?.split(":")[0];
         }
-
+        console.log({ weights, family });
         family = family.split(":")[0];
         const properties = data.find((f) => f.id === dashFamily);
         if (weights && weights.length > 0) {
@@ -169,7 +169,6 @@ server.get("/css2", async (request, reply) => {
                   weight = "400";
                 }
               }
-              console.log({ weight });
               let css = `
   /* ${subset} */
   @font-face {
