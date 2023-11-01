@@ -151,6 +151,9 @@ server.get("/css2", async (request, reply) => {
           dashFamily = family.toLowerCase().replace(/ /g, "-")?.split(":")[0];
         }
         family = family.split(":")[0];
+        if (dashFamily === 'source-sans-pro') {
+          dashFamily = 'source-sans-3';
+        }
         const properties = data.find((f) => f.id === dashFamily);
         if (weights && weights.length > 0) {
           for (let weight of weights) {
@@ -170,18 +173,18 @@ server.get("/css2", async (request, reply) => {
                   }
                 }
                 let css = `
-  /* ${subset} */
-  @font-face {
-    font-family: '${family}';
-    font-style: ${style};
-    font-weight: ${weight};`;
+/* ${subset} */
+@font-face {
+  font-family: '${family}';
+  font-style: ${style};
+  font-weight: ${weight};`;
                 if (display)
                   css += `
-    font-display: swap;`;
+  font-display: swap;`;
                 css += `
-    src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
-    unicode-range: ${subsets[subset]};
-  }`;
+  src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
+  unicode-range: ${subsets[subset]};
+}`;
                 payload.push(css);
               }
             } else {
