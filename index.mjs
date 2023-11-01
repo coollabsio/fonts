@@ -154,34 +154,38 @@ server.get("/css2", async (request, reply) => {
         const properties = data.find((f) => f.id === dashFamily);
         if (weights && weights.length > 0) {
           for (let weight of weights) {
-            for (const subset of properties?.subsets) {
-              if (weight.includes(",")) {
-                style = weight.split(",")[0] === "0" ? "normal" : "italic";
-                weight = weight.split(",")[1];
-              } else {
-                if (weight === "0") {
-                  style = "normal";
-                  weight = "400";
+            if (properties?.subsets) {
+              for (const subset of properties?.subsets) {
+                if (weight.includes(",")) {
+                  style = weight.split(",")[0] === "0" ? "normal" : "italic";
+                  weight = weight.split(",")[1];
+                } else {
+                  if (weight === "0") {
+                    style = "normal";
+                    weight = "400";
+                  }
+                  if (weight === "1") {
+                    style = "italic";
+                    weight = "400";
+                  }
                 }
-                if (weight === "1") {
-                  style = "italic";
-                  weight = "400";
-                }
-              }
-              let css = `
+                let css = `
   /* ${subset} */
   @font-face {
     font-family: '${family}';
     font-style: ${style};
     font-weight: ${weight};`;
-              if (display)
-                css += `
+                if (display)
+                  css += `
     font-display: swap;`;
-              css += `
+                css += `
     src: url(https://${domain}/${dashFamily}/${style}/${weight}.woff2) format('woff2');
     unicode-range: ${subsets[subset]};
   }`;
-              payload.push(css);
+                payload.push(css);
+              }
+            } else {
+              return reply.type('text/html').send('This font is not available. <br>If you think this is a bug, <a href="https://docs.coollabs.io/contact">let us know</a>.')
             }
           }
         }
