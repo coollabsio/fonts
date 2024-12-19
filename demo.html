@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Font Demo</title>
+  <style>
+    body {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.6;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 900;
+      font-size: 3em;
+      margin-bottom: 40px;
+    }
+
+    .controls {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .control-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .weight-demo {
+      display: grid;
+      gap: 20px;
+    }
+
+    .font-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      align-items: center;
+    }
+
+    .weight-label {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .italic-section {
+      margin-top: 40px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+
+    .variable-demo {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .variable-text {
+      font-size: 2em;
+      transition: font-weight 0.3s ease;
+    }
+
+    .variable-text:hover {
+      font-weight: 900;
+    }
+
+    #currentUrl {
+      word-break: break-all;
+      background: #eee;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+
+    .preview-section {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .preview-section.loaded {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Font Demo</h1>
+
+  <div class="controls">
+    <div class="control-group">
+      <label for="fontFamily">Font Family:</label>
+      <input type="text" id="fontFamily" value="Jost" placeholder="e.g., Roboto">
+    </div>
+
+    <div class="control-group">
+      <label>Weights:</label>
+      <div>
+        <label>
+          <input type="radio" name="weightType" value="variable" checked> Variable (range)
+        </label>
+        <label>
+          <input type="radio" name="weightType" value="single"> Single weight
+        </label>
+      </div>
+      <div id="weightControls">
+        <div id="variableWeights">
+          <input type="number" id="startWeight" value="100" min="100" max="900" step="100" placeholder="Start weight">
+          <input type="number" id="endWeight" value="900" min="100" max="900" step="100" placeholder="End weight">
+        </div>
+        <div id="singleWeight" style="display: none;">
+          <input type="number" id="weight" value="400" min="100" max="900" step="100" placeholder="Weight">
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Styles:</label>
+      <div>
+        <label>
+          <input type="checkbox" id="normalStyle" checked> Normal
+        </label>
+        <label>
+          <input type="checkbox" id="italicStyle" checked> Italic
+        </label>
+      </div>
+    </div>
+
+    <button onclick="updateFont()">Update Preview</button>
+  </div>
+
+  <div id="currentUrl"></div>
+
+  <div id="preview" class="preview-section">
+    <div class="weight-demo">
+      <h2>Normal Weights</h2>
+      <div class="font-row">
+        <span class="weight-label">100</span>
+        <span style="font-weight: 100">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">300</span>
+        <span style="font-weight: 300">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">500</span>
+        <span style="font-weight: 500">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">700</span>
+        <span style="font-weight: 700">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">900</span>
+        <span style="font-weight: 900">The quick brown fox jumps over the lazy dog</span>
+      </div>
+    </div>
+
+    <div class="italic-section">
+      <h2>Italic Weights</h2>
+      <div class="font-row">
+        <span class="weight-label">100</span>
+        <span style="font-weight: 100; font-style: italic">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">300</span>
+        <span style="font-weight: 300; font-style: italic">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">500</span>
+        <span style="font-weight: 500; font-style: italic">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">700</span>
+        <span style="font-weight: 700; font-style: italic">The quick brown fox jumps over the lazy dog</span>
+      </div>
+      <div class="font-row">
+        <span class="weight-label">900</span>
+        <span style="font-weight: 900; font-style: italic">The quick brown fox jumps over the lazy dog</span>
+      </div>
+    </div>
+
+    <div class="variable-demo">
+      <h2>Variable Font Demo</h2>
+      <p class="variable-text">Hover me to see weight animation!</p>
+    </div>
+  </div>
+
+  <script>
+    // Handle weight type radio buttons
+    document.querySelectorAll('input[name="weightType"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const variableWeights = document.getElementById('variableWeights');
+        const singleWeight = document.getElementById('singleWeight');
+        if (e.target.value === 'variable') {
+          variableWeights.style.display = 'block';
+          singleWeight.style.display = 'none';
+        } else {
+          variableWeights.style.display = 'none';
+          singleWeight.style.display = 'block';
+        }
+      });
+    });
+
+    function buildFontUrl() {
+      const family = document.getElementById('fontFamily').value;
+      const isVariable = document.querySelector('input[name="weightType"]:checked').value === 'variable';
+      const normalChecked = document.getElementById('normalStyle').checked;
+      const italicChecked = document.getElementById('italicStyle').checked;
+
+      let params = [];
+
+      if (isVariable) {
+        const start = document.getElementById('startWeight').value;
+        const end = document.getElementById('endWeight').value;
+        if (normalChecked) {
+          params.push(`0,${start}..${end}`);
+        }
+        if (italicChecked) {
+          params.push(`1,${start}..${end}`);
+        }
+      } else {
+        const weight = document.getElementById('weight').value;
+        if (normalChecked) {
+          params.push(`0,${weight}`);
+        }
+        if (italicChecked) {
+          params.push(`1,${weight}`);
+        }
+      }
+
+      const query = `family=${family}:ital,wght@${params.join(';')}&display=swap`;
+      return `/css2?${query}`;
+    }
+
+    function updateFont() {
+      const preview = document.getElementById('preview');
+      preview.classList.remove('loaded');
+
+      const url = buildFontUrl();
+      document.getElementById('currentUrl').textContent = url;
+
+      // Remove existing font stylesheet if any
+      const existingStyle = document.querySelector('link[data-font-style]');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+
+      // Add new font stylesheet
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      link.dataset.fontStyle = 'true';
+      link.onload = () => {
+        preview.style.fontFamily = document.getElementById('fontFamily').value;
+        preview.classList.add('loaded');
+      };
+      document.head.appendChild(link);
+    }
+
+    // Initial load
+    updateFont();
+  </script>
+</body>
+
+</html>

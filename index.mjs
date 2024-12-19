@@ -3,17 +3,32 @@ import got from "got";
 import "dotenv/config";
 import fs from "fs/promises";
 import etag from "@fastify/etag";
+import staticPlugin from "@fastify/static";
+import path from "path";
+import { fileURLToPath } from 'url';
 import { css2 } from "./css2.mjs";
 import { css } from "./css.mjs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const domain = process.env.DOMAIN ?? "localhost";
 if (!domain) {
   throw new Error("Please set DOMAIN in .env file.");
 }
+
 const server = fastify();
+
+// Register plugins
+server.register(etag);
+server.register(staticPlugin, {
+  root: path.join(__dirname),
+  prefix: '/', // optional: default '/'
+});
+
 const base = "gwfh.mranftl.com";
 const data = await got.get(`https://${base}/api/fonts/`).json();
 const subsets = JSON.parse(await fs.readFile("./subsets.json", "utf8"));
-server.register(etag);
 server.get("/", (response, reply) => {
   if (process.env.NODE_ENV === "development") {
     return reply.code(200).send("Hello from DEV.");
@@ -54,6 +69,11 @@ server.get("/css", async (request, reply) => {
 server.get("/css2", async (request, reply) => {
   return css2(request, reply, data, domain, subsets);
 });
+if (process.env.NODE_ENV === "development") {
+  server.get("/demo", async (request, reply) => {
+    return reply.sendFile("./demo.html");
+  });
+}
 
 try {
   await server.listen({ port: 3000, host: "0.0.0.0" });

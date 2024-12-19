@@ -18,42 +18,20 @@ export const css2 = (request, reply, data, domain, subsets) => {
           .send('This font is not available. <br>If you think this is a bug, <a href="https://docs.coollabs.io/contact">let us know</a>.');
       }
 
-      // Check if this is a variable font weight range
-      const isVariableFont = weights.length === 2;
-
       for (const style of styles) {
-        if (isVariableFont) {
-          const [start, end] = weights;
+        for (const weight of weights) {
           for (const subset of properties.subsets) {
-            const css = generateVariableFontFace({
+            const css = generateFontFace({
               subset,
               familyName,
               style,
-              startWeight: start,
-              endWeight: end,
+              weightValue: weight,
               display,
               domain,
               dashFamily,
               subsets
             });
             payload.push(css);
-          }
-        } else {
-          // Handle regular (non-variable) fonts
-          for (const weight of weights) {
-            for (const subset of properties.subsets) {
-              const css = generateFontFace({
-                subset,
-                familyName,
-                style,
-                weightValue: weight,
-                display,
-                domain,
-                dashFamily,
-                subsets
-              });
-              payload.push(css);
-            }
           }
         }
       }
@@ -96,6 +74,7 @@ function parseFamily(family) {
 
       // Reset styles since we'll be adding them based on the input
       styles.clear();
+      weights = new Set();
 
       for (const value of valuesList) {
         const [styleValue, weightValue] = value.split(",");
@@ -107,7 +86,14 @@ function parseFamily(family) {
 
         // Handle weight
         if (axes.includes("wght") && weightValue) {
-          weights = weightValue.includes("..") ? weightValue.split("..") : [weightValue];
+          if (weightValue.includes("..")) {
+            const [start, end] = weightValue.split("..").map(Number);
+            // Only add start and end weights
+            weights.add(start.toString());
+            weights.add(end.toString());
+          } else {
+            weights.add(weightValue);
+          }
         }
       }
     }
@@ -119,7 +105,7 @@ function parseFamily(family) {
     dashFamily = 'source-sans-3';
   }
 
-  return { weights, styles: Array.from(styles), dashFamily, familyName };
+  return { weights: Array.from(weights), styles: Array.from(styles), dashFamily, familyName };
 }
 
 function getFontProperties(dashFamily, data) {
@@ -141,27 +127,6 @@ function generateFontFace({ subset, familyName, style, weightValue, display, dom
 
   css += `
   src: url(https://${domain}/${dashFamily}/${style}/${weightValue}.woff2) format('woff2');
-  unicode-range: ${subsets[subset]};
-}`;
-
-  return css;
-}
-
-function generateVariableFontFace({ subset, familyName, style, startWeight, endWeight, display, domain, dashFamily, subsets }) {
-  let css = `
-/* ${subset} */
-@font-face {
-  font-family: '${familyName}';
-  font-style: ${style};
-  font-weight: ${startWeight} ${endWeight};`;
-
-  if (display) {
-    css += `
-  font-display: swap;`;
-  }
-
-  css += `
-  src: url(https://${domain}/${dashFamily}/${style}/${startWeight}-${endWeight}.woff2) format('woff2');
   unicode-range: ${subsets[subset]};
 }`;
 
