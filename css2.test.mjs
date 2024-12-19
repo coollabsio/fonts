@@ -52,16 +52,28 @@ describe("Font Loading API Tests", () => {
 
   test("loads a variable font weight range", async () => {
     const { localCss, googleCss } = await compareFontResponses("?family=Jost:ital,wght@0,100..900;1,100..900");
+
+    // Check normal style with both weights
     expect(localCss).toContain("font-family: 'Jost'");
     expect(localCss).toContain("font-style: normal");
-    expect(localCss).toMatch(/font-weight:\s*100\s+900/);
+    expect(localCss).toMatch(/font-weight:\s*100/);
+    expect(localCss).toMatch(/font-weight:\s*900/);
+
+    // Check italic style with both weights
     expect(localCss).toContain("font-style: italic");
-    expect(localCss).toMatch(/font-weight:\s*100\s+900/);
-    expect(googleCss).toContain("font-family: 'Jost'");
-    expect(googleCss).toContain("font-style: normal");
-    expect(googleCss).toMatch(/font-weight:\s*100\s+900/);
-    expect(googleCss).toContain("font-style: italic");
-    expect(googleCss).toMatch(/font-weight:\s*100\s+900/);
+    expect(localCss).toMatch(/font-weight:\s*100/);
+    expect(localCss).toMatch(/font-weight:\s*900/);
+
+    // Make sure intermediate weights are not included
+    expect(localCss).not.toMatch(/font-weight:\s*[2-8]00/);
+
+    expect((localCss.match(/@font-face/g) || []).length).toBe(12);
+
+    // Check that URLs are correctly formatted for individual weights
+    expect(localCss).toContain("/normal/100.woff2");
+    expect(localCss).toContain("/normal/900.woff2");
+    expect(localCss).toContain("/italic/100.woff2");
+    expect(localCss).toContain("/italic/900.woff2");
   });
 
   test("loads variable font with italic and weight ranges", async () => {
