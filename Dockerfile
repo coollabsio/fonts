@@ -28,9 +28,9 @@ COPY --from=builder /app/*.json ./
 COPY --from=builder /app/.env-template ./.env
 
 # Create a non-root user
-RUN addgroup --system --gid 1001 nodejs && \
+RUN addgroup --system --gid 1001 bunjs && \
     adduser --system --uid 1001 bunjs && \
-    chown -R bunjs:nodejs /app
+    chown -R bunjs:bunjs /app
 
 USER bunjs
 
