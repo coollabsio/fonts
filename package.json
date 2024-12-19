@@ -4,21 +4,20 @@
   "description": "A privacy-friendly drop-in replacement for Google Fonts",
   "main": "index.mjs",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon index.mjs",
-    "start": "NODE_ENV=production node index.mjs"
+    "dev": "NODE_ENV=development bun --watch index.mjs",
+    "start": "NODE_ENV=production bun index.mjs",
+    "gather": "bun gather-fonts.mjs"
   },
   "type": "module",
   "author": "Andras Bacsai",
   "license": "Apache-2.0",
   "dependencies": {
+    "@fastify/etag": "6.0.2",
     "css": "3.0.0",
-    "dotenv": "16.0.3",
-    "fastify": "4.10.2",
+    "dotenv": "16.4.7",
+    "fastify": "5.2.0",
     "fastify-cors": "6.1.0",
-    "@fastify/etag": "4.1.0",
-    "got": "12.5.3"
-  },
-  "devDependencies": {
-    "nodemon": "2.0.20"
+    "got": "14.4.5",
+    "p-limit": "^6.1.0"
   }
 }
