@@ -17,6 +17,9 @@ COPY . .
 # Production stage
 FROM oven/bun:1-slim
 
+# Install curl
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy from builder
