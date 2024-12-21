@@ -6,7 +6,7 @@ import etag from "@fastify/etag";
 import staticPlugin from "@fastify/static";
 import path from "path";
 import { fileURLToPath } from 'url';
-import { css2 } from "./css2.mjs";
+import { css2 } from "./css2-old.mjs";
 import { css } from "./css.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
