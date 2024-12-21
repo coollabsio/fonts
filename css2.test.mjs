@@ -169,7 +169,7 @@ describe("Font Loading API Tests", () => {
   });
 
   test("loads a variable font weight range", async () => {
-    const params = "?family=Jost:ital,wght@0,100..900;1,100..900";
+    const params = "?family=Jost:ital,wght@0,100..300;1,100..900";
     const results = await compareFontResponses(params);
 
     [results.localCss, results.localCssNext].forEach((css, index) => {
@@ -182,7 +182,9 @@ describe("Font Loading API Tests", () => {
           expect(css).toContain("font-family: 'Jost'");
           expect(css).toContain("font-style: normal");
           expect(css).toMatch(/font-weight:\s*100/);
-          expect(css).toMatch(/font-weight:\s*900/);
+          expect(css).toMatch(/font-weight:\s*200/);
+          expect(css).toMatch(/font-weight:\s*300/);
+          expect(css).not.toMatch(/font-style: normal.*?font-weight:\s*400/s);
 
           expect(css).toContain("font-style: italic");
           expect(css).toMatch(/font-weight:\s*100/);
