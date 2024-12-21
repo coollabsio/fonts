@@ -6,7 +6,8 @@ import etag from "@fastify/etag";
 import staticPlugin from "@fastify/static";
 import path from "path";
 import { fileURLToPath } from 'url';
-import { css2 } from "./css2-old.mjs";
+import { css2 as css2Next } from "./css2-next.mjs";
+import { css2 as css2Old } from "./css2.mjs";
 import { css } from "./css.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -67,7 +68,10 @@ server.get("/css", async (request, reply) => {
   return css(request, reply, data, domain, subsets);
 });
 server.get("/css2", async (request, reply) => {
-  return css2(request, reply, data, domain, subsets);
+  return css2Next(request, reply, data, domain, subsets);
+});
+server.get("/css2-next", async (request, reply) => {
+  return css2Next(request, reply, data, domain, subsets);
 });
 if (process.env.NODE_ENV === "development") {
   server.get("/demo", async (request, reply) => {
