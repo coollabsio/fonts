@@ -1,13 +1,11 @@
 import fastify from "fastify";
-import got from "got";
 import "dotenv/config";
 import fs from "fs/promises";
 import etag from "@fastify/etag";
 import staticPlugin from "@fastify/static";
 import path from "path";
 import { fileURLToPath } from 'url';
-import { css2 as css2Next } from "./css2-next.mjs";
-import { css2 as css2Old } from "./css2.mjs";
+import { css2 } from "./css2.mjs";
 import { css } from "./css.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,8 +25,7 @@ server.register(staticPlugin, {
   prefix: '/', // optional: default '/'
 });
 
-const base = "gwfh.mranftl.com";
-const data = await got.get(`https://${base}/api/fonts/`).json();
+// Load only subsets data - no external font list needed
 const subsets = JSON.parse(await fs.readFile("./subsets.json", "utf8"));
 server.get("/", (response, reply) => {
   if (process.env.NODE_ENV === "development") {
@@ -65,13 +62,10 @@ server.get("/icon", async (request, reply) => {
   return reply.end();
 });
 server.get("/css", async (request, reply) => {
-  return css(request, reply, data, domain, subsets);
+  return css(request, reply, null, domain, subsets);
 });
 server.get("/css2", async (request, reply) => {
-  return css2Next(request, reply, data, domain, subsets);
-});
-server.get("/css2-next", async (request, reply) => {
-  return css2Next(request, reply, data, domain, subsets);
+  return css2(request, reply, null, domain, subsets);
 });
 if (process.env.NODE_ENV === "development") {
   server.get("/demo", async (request, reply) => {

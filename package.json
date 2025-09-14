@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "NODE_ENV=development bun --watch index.mjs",
     "start": "NODE_ENV=production bun index.mjs",
-    "gather": "bun gather-fonts.mjs"
+    "gather": "bun gather-fonts.mjs",
+    "test": "bun test"
   },
   "type": "module",
   "author": "Andras Bacsai",
@@ -19,6 +20,7 @@
     "fastify": "5.2.0",
     "fastify-cors": "6.1.0",
     "got": "14.4.5",
-    "p-limit": "^6.1.0"
+    "p-limit": "^6.1.0",
+    "@sindresorhus/is": "^5.0.0"
   }
 }

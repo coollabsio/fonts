@@ -3,38 +3,34 @@ import { fetch } from "bun";
 
 describe("Font Loading API Tests", () => {
   const LOCAL_URL = "http://localhost:3000/css2";
-  const LOCAL_URL_NEXT = "http://localhost:3000/css2-next";
   const GOOGLE_URL = "https://fonts.googleapis.com/css2";
 
   async function compareFontResponses(params) {
     const localUrl = `${LOCAL_URL}${params}`;
     const googleUrl = `${GOOGLE_URL}${params}`;
-    const localUrlNext = `${LOCAL_URL_NEXT}${params}`;
 
     const results = {
       localCss: null,
       googleCss: null,
-      localCssNext: null,
       errors: {
         localCss: null,
-        googleCss: null,
-        localCssNext: null
+        googleCss: null
       }
     };
 
-    // try {
-    //   const localResponse = await fetch(localUrl);
-    //   results.localCss = await localResponse.text();
-    // } catch (error) {
-    //   results.errors.localCss = error;
-    //   console.log('Local CSS endpoint failed:', error.message);
-    //   console.log('Failed URL:', localUrl);
-    // }
+    try {
+      const localResponse = await fetch(localUrl);
+      results.localCss = await localResponse.text();
+    } catch (error) {
+      results.errors.localCss = error;
+      console.log('Local CSS endpoint failed:', error.message);
+      console.log('Failed URL:', localUrl);
+    }
 
     try {
       const googleResponse = await fetch(googleUrl, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36'
+          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
       });
       results.googleCss = await googleResponse.text();
@@ -44,16 +40,61 @@ describe("Font Loading API Tests", () => {
       console.log('Failed URL:', googleUrl);
     }
 
-    try {
-      const localResponseNext = await fetch(localUrlNext);
-      results.localCssNext = await localResponseNext.text();
-    } catch (error) {
-      results.errors.localCssNext = error;
-      console.log('Local CSS Next endpoint failed:', error.message);
-      console.log('Failed URL:', localUrlNext);
+    return results;
+  }
+
+  // Helper to extract font properties from CSS
+  function extractFontProperties(css) {
+    const properties = {
+      families: new Set(),
+      weights: new Set(),
+      styles: new Set(),
+      subsets: new Set(),
+      hasDisplay: false,
+      displayValue: null,
+      fontFaceCount: 0
+    };
+
+    if (!css) return properties;
+
+    // Extract font families
+    const familyMatches = css.matchAll(/font-family:\s*['"]([^'"]+)['"]/g);
+    for (const match of familyMatches) {
+      properties.families.add(match[1]);
     }
 
-    return results;
+    // Extract weights
+    const weightMatches = css.matchAll(/font-weight:\s*(\d+)/g);
+    for (const match of weightMatches) {
+      properties.weights.add(match[1]);
+    }
+
+    // Extract styles
+    const styleMatches = css.matchAll(/font-style:\s*(\w+)/g);
+    for (const match of styleMatches) {
+      properties.styles.add(match[1]);
+    }
+
+    // Extract subsets
+    const subsetMatches = css.matchAll(/\/\*\s*([^*]+)\s*\*\//g);
+    for (const match of subsetMatches) {
+      const subset = match[1].trim();
+      if (subset && !subset.includes('Optimized')) {
+        properties.subsets.add(subset);
+      }
+    }
+
+    // Check for font-display
+    const displayMatch = css.match(/font-display:\s*(\w+)/);
+    if (displayMatch) {
+      properties.hasDisplay = true;
+      properties.displayValue = displayMatch[1];
+    }
+
+    // Count @font-face rules
+    properties.fontFaceCount = (css.match(/@font-face/g) || []).length;
+
+    return properties;
   }
 
   test("loads a single regular font", async () => {
@@ -61,33 +102,24 @@ describe("Font Loading API Tests", () => {
     const results = await compareFontResponses(params);
 
     if (results.localCss) {
-      try {
-        expect(results.localCss).toContain("font-family: 'Roboto'");
-        expect(results.localCss).toContain("font-weight: 400");
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL}${params}`);
-        throw error;
-      }
-    }
-
-    if (results.localCssNext) {
-      try {
-        expect(results.localCssNext).toContain("font-family: 'Roboto'");
-        expect(results.localCssNext).toContain("font-weight: 400");
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL_NEXT}${params}`);
-        throw error;
-      }
+      expect(results.localCss).toContain("font-family: 'Roboto'");
+      expect(results.localCss).toContain("font-weight: 400");
+      expect(results.localCss).toContain("font-stretch: 100%");
+      expect(results.localCss).toContain("unicode-range");
     }
 
     if (results.googleCss) {
-      try {
-        expect(results.googleCss).toContain("font-family: 'Roboto'");
-        expect(results.googleCss).toContain("font-weight: 400");
-      } catch (error) {
-        console.log('Test failed for URL:', `${GOOGLE_URL}${params}`);
-        throw error;
-      }
+      expect(results.googleCss).toContain("font-family: 'Roboto'");
+      expect(results.googleCss).toContain("font-weight: 400");
+    }
+
+    // Compare properties
+    const localProps = extractFontProperties(results.localCss);
+    const googleProps = extractFontProperties(results.googleCss);
+
+    if (results.localCss && results.googleCss) {
+      expect(localProps.families).toEqual(googleProps.families);
+      expect(localProps.weights).toEqual(googleProps.weights);
     }
   });
 
@@ -96,409 +128,332 @@ describe("Font Loading API Tests", () => {
     const results = await compareFontResponses(params);
 
     if (results.localCss) {
-      try {
-        expect(results.localCss).toContain("font-family: 'Roboto'");
-        expect(results.localCss).toMatch(/font-weight:\s*700/);
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL}${params}`);
-        throw error;
-      }
-    }
-
-    if (results.localCssNext) {
-      try {
-        expect(results.localCssNext).toContain("font-family: 'Roboto'");
-        expect(results.localCssNext).toMatch(/font-weight:\s*700/);
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL_NEXT}${params}`);
-        throw error;
-      }
+      expect(results.localCss).toContain("font-family: 'Roboto'");
+      expect(results.localCss).toMatch(/font-weight:\s*700/);
     }
 
     if (results.googleCss) {
-      try {
-        expect(results.googleCss).toContain("font-family: 'Roboto'");
-        expect(results.googleCss).toMatch(/font-weight:\s*700/);
-      } catch (error) {
-        console.log('Test failed for URL:', `${GOOGLE_URL}${params}`);
-        throw error;
-      }
+      expect(results.googleCss).toContain("font-family: 'Roboto'");
+      expect(results.googleCss).toMatch(/font-weight:\s*700/);
     }
   });
 
   test("loads multiple weights", async () => {
-    const params = "?family=Roboto:wght@100;200;300&display=swap";
+    const params = "?family=Roboto:wght@100;300;500;700;900&display=swap";
+    const results = await compareFontResponses(params);
+
+    const localProps = extractFontProperties(results.localCss);
+    const googleProps = extractFontProperties(results.googleCss);
+
+    if (results.localCss) {
+      expect(localProps.weights.has("100")).toBe(true);
+      expect(localProps.weights.has("300")).toBe(true);
+      expect(localProps.weights.has("500")).toBe(true);
+      expect(localProps.weights.has("700")).toBe(true);
+      expect(localProps.weights.has("900")).toBe(true);
+      expect(localProps.displayValue).toBe("swap");
+    }
+
+    if (results.googleCss) {
+      expect(googleProps.weights.has("100")).toBe(true);
+      expect(googleProps.weights.has("300")).toBe(true);
+      expect(googleProps.weights.has("500")).toBe(true);
+      expect(googleProps.weights.has("700")).toBe(true);
+      expect(googleProps.weights.has("900")).toBe(true);
+      expect(googleProps.displayValue).toBe("swap");
+    }
+  });
+
+  test("loads italic variants", async () => {
+    const params = "?family=Roboto:ital@1";
     const results = await compareFontResponses(params);
 
     if (results.localCss) {
-      try {
-        expect(results.localCss).toContain("font-family: 'Roboto'");
-        expect(results.localCss).toMatch(/font-weight:\s*100/);
-        expect(results.localCss).toMatch(/font-weight:\s*200/);
-        expect(results.localCss).toMatch(/font-weight:\s*300/);
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL}${params}`);
-        throw error;
-      }
+      expect(results.localCss).toContain("font-style: italic");
+      expect(results.localCss).toContain("font-weight: 400");
     }
 
-    if (results.localCssNext) {
-      try {
-        expect(results.localCssNext).toContain("font-family: 'Roboto'");
-        expect(results.localCssNext).toMatch(/font-weight:\s*100/);
-        expect(results.localCssNext).toMatch(/font-weight:\s*200/);
-        expect(results.localCssNext).toMatch(/font-weight:\s*300/);
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL_NEXT}${params}`);
-        throw error;
-      }
+    if (results.googleCss) {
+      expect(results.googleCss).toContain("font-style: italic");
+      expect(results.googleCss).toContain("font-weight: 400");
     }
-
-    // if (results.googleCss) {
-    //   try {
-    //     expect(results.googleCss).toContain("font-family: 'Roboto'");
-    //     expect(results.googleCss).toMatch(/font-weight:\s*100/);
-    //     expect(results.googleCss).toMatch(/font-weight:\s*200/);
-    //     expect(results.googleCss).toMatch(/font-weight:\s*300/);
-    //     expect(results.googleCss).toContain("font-display: swap");
-    //   } catch (error) {
-    //     console.log('Test failed for URL:', `${GOOGLE_URL}${params}`);
-    //     throw error;
-    //   }
-    // }
   });
 
   test("loads a variable font weight range", async () => {
-    const params = "?family=Jost:ital,wght@0,100..300;1,100..900";
+    const params = "?family=Roboto:wght@100..900";
     const results = await compareFontResponses(params);
 
-    [results.localCss, results.localCssNext].forEach((css, index) => {
-      if (css) {
-        const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-        const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-        console.log(`${endpoint} checks succeeded`);
+    if (results.localCss) {
+      expect(results.localCss).toContain("font-family: 'Roboto'");
 
-        try {
-          expect(css).toContain("font-family: 'Jost'");
-          expect(css).toContain("font-style: normal");
-          expect(css).toMatch(/font-weight:\s*100/);
-          expect(css).toMatch(/font-weight:\s*200/);
-          expect(css).toMatch(/font-weight:\s*300/);
-          expect(css).not.toMatch(/font-style: normal.*?font-weight:\s*400/s);
-
-          expect(css).toContain("font-style: italic");
-          expect(css).toMatch(/font-weight:\s*100/);
-          expect(css).toMatch(/font-weight:\s*200/);
-          expect(css).toMatch(/font-weight:\s*300/);
-          expect(css).toMatch(/font-weight:\s*400/);
-          expect(css).toMatch(/font-weight:\s*500/);
-          expect(css).toMatch(/font-weight:\s*600/);
-          expect(css).toMatch(/font-weight:\s*700/);
-          expect(css).toMatch(/font-weight:\s*800/);
-          expect(css).toMatch(/font-weight:\s*900/);
-
-          expect((css.match(/@font-face/g) || []).length).toBe(54);
-
-          expect(css).toContain("/normal/100.woff2");
-          expect(css).toContain("/normal/900.woff2");
-          expect(css).toContain("/italic/100.woff2");
-          expect(css).toContain("/italic/900.woff2");
-        } catch (error) {
-          console.log('Test failed for URL:', `${url}${params}`);
-          throw error;
-        }
-      }
-    });
+      // Should have all standard weights
+      const localProps = extractFontProperties(results.localCss);
+      ["100", "200", "300", "400", "500", "600", "700", "800", "900"].forEach(weight => {
+        expect(localProps.weights.has(weight)).toBe(true);
+      });
+    }
   });
 
-  test("loads variable font with italic and weight ranges", async () => {
-    const params = "?family=Roboto:ital,wght@1,400";
+  test("loads combined italic and weights", async () => {
+    const params = "?family=Roboto:ital,wght@0,400;0,700;1,400;1,700";
     const results = await compareFontResponses(params);
 
-    [results.localCss, results.localCssNext].forEach((css, index) => {
-      if (css) {
-        const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-        const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-        console.log(`${endpoint} checks succeeded`);
+    const localProps = extractFontProperties(results.localCss);
 
-        try {
-          expect(css).toContain("font-family: 'Roboto'");
-          expect(css).toMatch(/font-style:\s*italic/);
-          expect(css).toMatch(/font-weight:\s*400/);
-        } catch (error) {
-          console.log('Test failed for URL:', `${url}${params}`);
-          throw error;
-        }
-      }
-    });
+    if (results.localCss) {
+      expect(localProps.families.has("Roboto")).toBe(true);
+      expect(localProps.styles.has("normal")).toBe(true);
+      expect(localProps.styles.has("italic")).toBe(true);
+      expect(localProps.weights.has("400")).toBe(true);
+      expect(localProps.weights.has("700")).toBe(true);
+    }
 
     if (results.googleCss) {
-      console.log('Google CSS checks succeeded');
-      try {
-        expect(results.googleCss).toContain("font-family: 'Roboto'");
-        expect(results.googleCss).toMatch(/font-style:\s*italic/);
-        expect(results.googleCss).toMatch(/font-weight:\s*400/);
-      } catch (error) {
-        console.log('Test failed for URL:', `${GOOGLE_URL}${params}`);
-        throw error;
-      }
+      const googleProps = extractFontProperties(results.googleCss);
+      expect(googleProps.families.has("Roboto")).toBe(true);
+      expect(googleProps.styles.has("normal")).toBe(true);
+      expect(googleProps.styles.has("italic")).toBe(true);
     }
   });
 
   test("loads multiple fonts", async () => {
-    const params = "?family=Roboto&family=Open+Sans";
-    const results = await compareFontResponses(params);
-
-    [results.localCss, results.localCssNext].forEach((css, index) => {
-      if (css) {
-        const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-        const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-        console.log(`${endpoint} checks succeeded`);
-
-        try {
-          expect(css).toContain("font-family: 'Roboto'");
-          expect(css).toContain("font-family: 'Open Sans'");
-        } catch (error) {
-          console.log('Test failed for URL:', `${url}${params}`);
-          throw error;
-        }
-      }
-    });
-
-    if (results.googleCss) {
-      console.log('Google CSS checks succeeded');
-      try {
-        expect(results.googleCss).toContain("font-family: 'Roboto'");
-        expect(results.googleCss).toContain("font-family: 'Open Sans'");
-      } catch (error) {
-        console.log('Test failed for URL:', `${GOOGLE_URL}${params}`);
-        throw error;
-      }
-    }
-  });
-
-  test("loads font with display swap", async () => {
-    const params = "?family=Roboto&display=swap";
+    const params = "?family=Roboto&family=Open+Sans&family=Lato";
     const results = await compareFontResponses(params);
 
     if (results.localCss) {
-      try {
-        expect(results.localCss).toContain("font-display: swap");
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL}${params}`);
-        throw error;
-      }
-    }
-
-    if (results.localCssNext) {
-      try {
-        expect(results.localCssNext).toContain("font-display: swap");
-      } catch (error) {
-        console.log('Test failed for URL:', `${LOCAL_URL_NEXT}${params}`);
-        throw error;
-      }
+      expect(results.localCss).toContain("font-family: 'Roboto'");
+      expect(results.localCss).toContain("font-family: 'Open Sans'");
+      expect(results.localCss).toContain("font-family: 'Lato'");
     }
 
     if (results.googleCss) {
-      try {
-        expect(results.googleCss).toContain("font-display: swap");
-      } catch (error) {
-        console.log('Test failed for URL:', `${GOOGLE_URL}${params}`);
-        throw error;
+      expect(results.googleCss).toContain("font-family: 'Roboto'");
+      expect(results.googleCss).toContain("font-family: 'Open Sans'");
+      expect(results.googleCss).toContain("font-family: 'Lato'");
+    }
+  });
+
+  test("loads font with display parameter variations", async () => {
+    const displayValues = ["auto", "block", "swap", "fallback", "optional"];
+
+    for (const display of displayValues) {
+      const params = `?family=Roboto&display=${display}`;
+      const results = await compareFontResponses(params);
+
+      if (results.localCss) {
+        expect(results.localCss).toContain(`font-display: ${display}`);
+      }
+
+      if (results.googleCss) {
+        // Google doesn't include font-display for 'auto' value
+        if (display === "auto") {
+          expect(results.googleCss).not.toContain("font-display:");
+        } else {
+          expect(results.googleCss).toContain(`font-display: ${display}`);
+        }
       }
     }
   });
 
-  test("handles invalid font request", async () => {
-    const params = "?family=NonExistentFont";
-    const response = await fetch(`${LOCAL_URL}${params}`);
-    const responseNext = await fetch(`${LOCAL_URL_NEXT}${params}`);
+  test("compares subset handling between local and Google", async () => {
+    const params = "?family=Roboto:wght@400";
+    const results = await compareFontResponses(params);
 
-    [response, responseNext].forEach((resp, index) => {
-      const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-      const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-      if (resp.status === 200) {
-        console.log(`${endpoint} returned 200 status as expected`);
-      } else {
-        console.log(`${endpoint} failed with status ${resp.status}`);
-        console.log('Failed URL:', `${url}${params}`);
-      }
-      try {
-        expect(resp.status).toBe(200);
-        expect(resp.text()).resolves.toContain("This font is not available");
-      } catch (error) {
-        console.log('Test failed for URL:', `${url}${params}`);
-        throw error;
-      }
-    });
+    const localProps = extractFontProperties(results.localCss);
+    const googleProps = extractFontProperties(results.googleCss);
+
+    if (results.localCss && results.googleCss) {
+      // Sort subsets for consistent comparison
+      const localSubsets = Array.from(localProps.subsets).sort();
+      const googleSubsets = Array.from(googleProps.subsets).sort();
+
+      console.log('Local subsets (sorted):', localSubsets);
+      console.log('Google subsets (sorted):', googleSubsets);
+
+      // Check that we have common subsets
+      expect(localProps.subsets.has("latin")).toBe(true);
+      expect(localProps.subsets.has("latin-ext")).toBe(true);
+      expect(localProps.subsets.has("cyrillic")).toBe(true);
+      expect(localProps.subsets.has("greek")).toBe(true);
+
+      // Google should also have these
+      expect(googleProps.subsets.has("latin")).toBe(true);
+      expect(googleProps.subsets.has("latin-ext")).toBe(true);
+
+      // Both should have the same subsets (when sorted)
+      expect(localSubsets).toEqual(googleSubsets);
+    }
   });
 
-  test("handles missing family parameter", async () => {
+  test("handles special characters in font names", async () => {
+    const params = "?family=Roboto+Mono:wght@400";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      expect(results.localCss).toContain("font-family: 'Roboto Mono'");
+    }
+
+    if (results.googleCss) {
+      expect(results.googleCss).toContain("font-family: 'Roboto Mono'");
+    }
+  });
+
+  test("loads fonts with non-standard weights", async () => {
+    const params = "?family=Inter:wght@175;425;675";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      const localProps = extractFontProperties(results.localCss);
+      expect(localProps.weights.has("175")).toBe(true);
+      expect(localProps.weights.has("425")).toBe(true);
+      expect(localProps.weights.has("675")).toBe(true);
+    }
+  });
+
+  test("loads variable font with partial range", async () => {
+    const params = "?family=Roboto:wght@300..700";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      const localProps = extractFontProperties(results.localCss);
+      // Should have weights 300-700
+      ["300", "400", "500", "600", "700"].forEach(weight => {
+        expect(localProps.weights.has(weight)).toBe(true);
+      });
+      // Should NOT have weights outside range
+      expect(localProps.weights.has("100")).toBe(false);
+      expect(localProps.weights.has("200")).toBe(false);
+      expect(localProps.weights.has("800")).toBe(false);
+      expect(localProps.weights.has("900")).toBe(false);
+    }
+  });
+
+  test("loads font with text optimization parameter", async () => {
+    const text = "Hello World";
+    const params = `?family=Roboto&text=${encodeURIComponent(text)}`;
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      expect(results.localCss).toContain(`Optimized for text: ${text}`);
+      expect(results.localCss).toContain(`?text=${encodeURIComponent(text)}`);
+    }
+
+    // Google handles text parameter differently (subsetting)
+    if (results.googleCss) {
+      expect(results.googleCss).toContain("font-family: 'Roboto'");
+    }
+  });
+
+  test("handles complex multi-font request", async () => {
+    const params = "?family=Roboto:ital,wght@0,300;0,400;1,300;1,400&family=Open+Sans:wght@300..800&family=Lato:ital@0;1&display=swap";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      const localProps = extractFontProperties(results.localCss);
+
+      // Check all three fonts are present
+      expect(localProps.families.has("Roboto")).toBe(true);
+      expect(localProps.families.has("Open Sans")).toBe(true);
+      expect(localProps.families.has("Lato")).toBe(true);
+
+      // Check display value
+      expect(localProps.displayValue).toBe("swap");
+
+      // Check styles
+      expect(localProps.styles.has("normal")).toBe(true);
+      expect(localProps.styles.has("italic")).toBe(true);
+    }
+  });
+
+  test("compares font-face count for same request", async () => {
+    const params = "?family=Roboto:wght@400;700";
+    const results = await compareFontResponses(params);
+
+    const localProps = extractFontProperties(results.localCss);
+    const googleProps = extractFontProperties(results.googleCss);
+
+    if (results.localCss && results.googleCss) {
+      console.log(`Local font-face count: ${localProps.fontFaceCount}`);
+      console.log(`Google font-face count: ${googleProps.fontFaceCount}`);
+
+      // Both should generate multiple @font-face rules for subsets
+      expect(localProps.fontFaceCount).toBeGreaterThan(0);
+      expect(googleProps.fontFaceCount).toBeGreaterThan(0);
+    }
+  });
+
+  test("handles font with all weights and styles", async () => {
+    const params = "?family=Roboto:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      const localProps = extractFontProperties(results.localCss);
+
+      // Should have all weights
+      ["100", "200", "300", "400", "500", "600", "700", "800", "900"].forEach(weight => {
+        expect(localProps.weights.has(weight)).toBe(true);
+      });
+
+      // Should have both styles
+      expect(localProps.styles.has("normal")).toBe(true);
+      expect(localProps.styles.has("italic")).toBe(true);
+    }
+  });
+
+  test("validates unicode-range presence", async () => {
+    const params = "?family=Roboto";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      // Check for unicode-range in each @font-face
+      const fontFaces = results.localCss.split('@font-face');
+      fontFaces.slice(1).forEach(face => {
+        expect(face).toContain('unicode-range:');
+      });
+    }
+
+    if (results.googleCss) {
+      // Google also includes unicode-range
+      const fontFaces = results.googleCss.split('@font-face');
+      fontFaces.slice(1).forEach(face => {
+        expect(face).toContain('unicode-range:');
+      });
+    }
+  });
+
+  test("handles Source Sans Pro special case", async () => {
+    const params = "?family=Source+Sans+Pro";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      // Should be converted to Source Sans 3
+      expect(results.localCss).toContain("font-family: 'Source Sans Pro'");
+      expect(results.localCss).toContain("/source-sans-3/");
+    }
+  });
+
+  test("compares URL structure", async () => {
+    const params = "?family=Roboto:wght@400";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      // Check our CDN URL structure
+      expect(results.localCss).toMatch(/https:\/\/cdn\.fonts\.coollabs\.io\/[^/]+\/[^/]+\/\d+\.woff2/);
+    }
+
+    if (results.googleCss) {
+      // Check Google's URL structure
+      expect(results.googleCss).toMatch(/https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2/);
+    }
+  });
+
+  test("handles missing family parameter gracefully", async () => {
     const response = await fetch(LOCAL_URL);
-    const responseNext = await fetch(LOCAL_URL_NEXT);
-
-    [response, responseNext].forEach((resp, index) => {
-      const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-      const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-      if (resp.status === 500) {
-        console.log(`${endpoint} returned 500 status as expected`);
-      } else {
-        console.log(`${endpoint} failed with unexpected status ${resp.status}`);
-        console.log('Failed URL:', url);
-      }
-      try {
-        expect(resp.status).toBe(500);
-      } catch (error) {
-        console.log('Test failed for URL:', url);
-        throw error;
-      }
-    });
+    expect(response.status).toBe(500);
   });
 
-  // test("loads font with text optimization parameter", async () => {
-  //   const text = "Hello World";
-  //   const results = await compareFontResponses(`?family=Roboto&text=${encodeURIComponent(text)}`);
-  //   console.log("http://localhost:3000/css2?family=Roboto&text=Hello+World")
-  //   [results.localCss, results.localCssNext].forEach((css, index) => {
-  //     if (css) {
-  //       const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-  //       console.log(`${endpoint} checks succeeded`);
-
-  //       expect(css).toContain(`Optimized for text: ${text}`);
-  //       expect(css).toContain(`?text=${encodeURIComponent(text)}`);
-  //     }
-  //   });
-
-  //   if (results.googleCss) {
-  //     console.log('Google CSS checks succeeded');
-  //     expect(results.googleCss).toContain("font-family: 'Roboto'");
-  //   }
-  // });
-
-  test("loads font with non-standard weights", async () => {
-    const params = "?family=Roboto:wght@451;577";
-    const results = await compareFontResponses(params);
-
-    [results.localCss, results.localCssNext].forEach((css, index) => {
-      if (css) {
-        const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-        const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-        console.log(`${endpoint} checks succeeded`);
-
-        try {
-          expect(css).toContain("font-family: 'Roboto'");
-          expect(css).toMatch(/font-weight:\s*451/);
-          expect(css).toMatch(/font-weight:\s*577/);
-        } catch (error) {
-          console.log('Test failed for URL:', `${url}${params}`);
-          throw error;
-        }
-      }
-    });
-  });
-
-  test("loads font with multiple weight definitions", async () => {
-    const params = "?family=Roboto:wght@300;400..700;900";
-    const results = await compareFontResponses(params);
-
-    [results.localCss, results.localCssNext].forEach((css, index) => {
-      if (css) {
-        const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-        const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-        console.log(`${endpoint} checks succeeded`);
-
-        try {
-          expect(css).toContain("font-family: 'Roboto'");
-          expect(css).toMatch(/font-weight:\s*300/);
-          expect(css).toMatch(/font-weight:\s*400/);
-          expect(css).toMatch(/font-weight:\s*500/);
-          expect(css).toMatch(/font-weight:\s*600/);
-          expect(css).toMatch(/font-weight:\s*700/);
-          expect(css).toMatch(/font-weight:\s*900/);
-        } catch (error) {
-          console.log('Test failed for URL:', `${url}${params}`);
-          throw error;
-        }
-      }
-    });
-  });
-
-  test("loads font with custom display parameter", async () => {
-    const params = "?family=Roboto&display=block";
-    const results = await compareFontResponses(params);
-
-    [results.localCss, results.localCssNext].forEach((css, index) => {
-      if (css) {
-        const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-        const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-        console.log(`${endpoint} checks succeeded`);
-        try {
-          expect(css).toContain("font-display: block");
-        } catch (error) {
-          console.log('Test failed for URL:', `${url}${params}`);
-          throw error;
-        }
-      }
-    });
-
-    if (results.googleCss) {
-      console.log('Google CSS checks succeeded');
-      try {
-        expect(results.googleCss).toContain("font-display: block");
-      } catch (error) {
-        console.log('Test failed for URL:', `${GOOGLE_URL}${params}`);
-        throw error;
-      }
-    }
-  });
-
-  // test("loads font with complex variable range and styles", async () => {
-  //   const params = "?family=Roboto+Flex:wght,wdth,GRAD@300,85.0,0;400,100.0,0;500,151.0,-50";
-  //   const results = await compareFontResponses(params);
-
-  //   [results.localCss, results.localCssNext].forEach((css, index) => {
-  //     if (css) {
-  //       const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-  //       const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-  //       console.log(`${endpoint} checks succeeded`);
-
-  //       try {
-  //         expect(css).toContain("font-family: 'Roboto Flex'");
-  //         expect(css).toMatch(/font-weight:\s*300/);
-  //         expect(css).toMatch(/font-weight:\s*400/);
-  //         expect(css).toMatch(/font-weight:\s*500/);
-  //       } catch (error) {
-  //         console.log('Test failed for URL:', `${url}${params}`);
-  //         throw error;
-  //       }
-  //     }
-  //   });
-  // });
-
-  test("loads multiple fonts with different configurations", async () => {
-    const params = "?family=Roboto:ital,wght@0,400;1,700&family=Open+Sans:wght@300..800";
-    const results = await compareFontResponses(params);
-
-    [results.localCss, results.localCssNext].forEach((css, index) => {
-      if (css) {
-        const endpoint = index === 0 ? 'Local CSS' : 'Local CSS Next';
-        const url = index === 0 ? LOCAL_URL : LOCAL_URL_NEXT;
-        console.log(`${endpoint} checks succeeded`);
-
-        try {
-          expect(css).toContain("font-family: 'Roboto'");
-          expect(css).toContain("font-family: 'Open Sans'");
-          expect(css).toMatch(/font-style:\s*normal/);
-          expect(css).toMatch(/font-style:\s*italic/);
-          expect(css).toMatch(/font-weight:\s*400/);
-          expect(css).toMatch(/font-weight:\s*700/);
-          expect(css).toMatch(/font-weight:\s*300/);
-          expect(css).toMatch(/font-weight:\s*800/);
-        } catch (error) {
-          console.log('Test failed for URL:', `${url}${params}`);
-          throw error;
-        }
-      }
-    });
+  test("handles empty family parameter", async () => {
+    const response = await fetch(`${LOCAL_URL}?family=`);
+    expect(response.status).toBe(500);
   });
 });
