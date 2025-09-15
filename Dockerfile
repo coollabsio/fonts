@@ -28,6 +28,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY index.mjs ./
 COPY css.mjs ./
 COPY css2.mjs ./
+COPY gather-fonts.mjs ./
 COPY subsets.json ./
 COPY font-versions-cache.json ./
 

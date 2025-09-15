@@ -14,8 +14,6 @@ CLAUDE.md
 *.spec.js
 
 # Development files
-gather-fonts.mjs
-gather-fonts-new.mjs
 font-cache.json
 font-cache.json.bak
 demo.html
