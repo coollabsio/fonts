@@ -18,7 +18,6 @@ gather-fonts.mjs
 gather-fonts-new.mjs
 font-cache.json
 font-cache.json.bak
-font-versions-cache.json
 demo.html
 
 # Environment files (we copy .env-template as .env)
