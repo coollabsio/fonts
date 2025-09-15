@@ -29,6 +29,7 @@ COPY index.mjs ./
 COPY css.mjs ./
 COPY css2.mjs ./
 COPY subsets.json ./
+COPY font-versions-cache.json ./
 
 # Copy environment template
 COPY .env-template ./.env
