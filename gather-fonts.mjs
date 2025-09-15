@@ -12,9 +12,6 @@ const RETRY_DELAYS = [1000, 2000, 4000];
 const VERSION_CACHE_FILE = "./font-versions-cache.json";
 const GOOGLE_FONTS_API = "https://www.googleapis.com/webfonts/v1/webfonts";
 const BUNNY_CDN_API = "https://api.bunny.net";
-const BUNNY_CDN_ID = "701712";
-
-const storageZoneName = "coollabs-fonts";
 const pipeline = promisify(stream.pipeline);
 const limit = pLimit(CONCURRENT_DOWNLOADS);
 
@@ -229,7 +226,7 @@ async function processFont(fontData, versionCache) {
 
           // Upload to BunnyCDN
           const dir = `${normalizedFamily}/${style}`;
-          const bunnyUrl = `https://storage.bunnycdn.com/${storageZoneName}/${dir}/${weight}.woff2`;
+          const bunnyUrl = `https://storage.bunnycdn.com/${process.env.BUNNY_STORAGE_ZONE_NAME}/${dir}/${weight}.woff2`;
 
           await pipeline(
             got.stream(woff2Url, {
@@ -343,7 +340,12 @@ async function generateSubsets(fonts) {
     })
   );
 
-  return allSubsets;
+  // Sort the subsets object by keys to ensure consistent output
+  const sortedSubsets = {};
+  Object.keys(allSubsets).sort().forEach(key => {
+    sortedSubsets[key] = allSubsets[key];
+  });
+  return sortedSubsets;
 }
 
 async function purgeBunnyCDNCache() {
@@ -352,10 +354,15 @@ async function purgeBunnyCDNCache() {
     return false;
   }
 
+  if (!process.env.BUNNY_CDN_ID) {
+    console.log('Warning: BUNNY_CDN_ID not found, skipping CDN cache purge');
+    return false;
+  }
+
   try {
     console.log('\n=== Purging BunnyCDN Cache ===');
 
-    const purgeUrl = `${BUNNY_CDN_API}/pullzone/${BUNNY_CDN_ID}/purgeCache`;
+    const purgeUrl = `${BUNNY_CDN_API}/pullzone/${process.env.BUNNY_CDN_ID}/purgeCache`;
     const response = await fetchWithRetry(purgeUrl, {
       method: 'POST',
       headers: {
@@ -366,7 +373,7 @@ async function purgeBunnyCDNCache() {
       json: {},
       responseType: 'json'
     });
-    console.log(`✓ Successfully purged BunnyCDN cache for ${BUNNY_CDN_ID} zone`);
+    console.log(`✓ Successfully purged BunnyCDN cache for pull zone ${process.env.BUNNY_CDN_ID}`);
     return true;
   } catch (error) {
     console.error('✗ Failed to purge BunnyCDN cache:', error.message);
@@ -396,7 +403,7 @@ async function retryFailedUploads() {
 
           const normalizedFamily = normalizeFileName(family);
           const dir = `${normalizedFamily}/${style}`;
-          const bunnyUrl = `https://storage.bunnycdn.com/${storageZoneName}/${dir}/${weight}.woff2`;
+          const bunnyUrl = `https://storage.bunnycdn.com/${process.env.BUNNY_STORAGE_ZONE_NAME}/${dir}/${weight}.woff2`;
 
           await pipeline(
             got.stream(woff2Url, {
@@ -430,7 +437,9 @@ async function main() {
   console.log('Starting Google Fonts gathering with version tracking...');
   console.log(`Google Fonts API Key: ${process.env.GOOGLE_FONTS_API_KEY ? 'Configured' : 'Missing!'}`);
   console.log(`Bunny Storage API Key: ${process.env.BUNNY_STORAGE_API_KEY ? 'Configured' : 'Missing!'}`);
+  console.log(`Bunny Storage Zone: ${process.env.BUNNY_STORAGE_ZONE_NAME || 'Missing!'}`);
   console.log(`Bunny CDN API Key: ${process.env.BUNNY_API_KEY ? 'Configured' : 'Missing (purge will be skipped)'}`);
+  console.log(`Bunny CDN Pull Zone ID: ${process.env.BUNNY_CDN_ID || 'Missing (purge will be skipped)'}`);
 
   if (!process.env.GOOGLE_FONTS_API_KEY) {
     console.error('Error: GOOGLE_FONTS_API_KEY not found in .env file');
@@ -439,6 +448,11 @@ async function main() {
 
   if (!process.env.BUNNY_STORAGE_API_KEY) {
     console.error('Error: BUNNY_STORAGE_API_KEY not found in .env file');
+    process.exit(1);
+  }
+
+  if (!process.env.BUNNY_STORAGE_ZONE_NAME) {
+    console.error('Error: BUNNY_STORAGE_ZONE_NAME not found in .env file');
     process.exit(1);
   }
 

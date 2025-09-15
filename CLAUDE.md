@@ -59,6 +59,9 @@ Required in `.env` file:
 - `DOMAIN` - Domain for the service (e.g., "api.fonts.coollabs.io")
 - `NODE_ENV` - Environment mode (development/production)
 
-For font gathering:
-- `BUNNY_API_KEY` - BunnyCDN API key for purging cache
+For font gathering (gather-fonts.mjs):
+- `GOOGLE_FONTS_API_KEY` - Google Fonts API key for fetching font metadata
 - `BUNNY_STORAGE_API_KEY` - BunnyCDN storage zone API key for uploading fonts
+- `BUNNY_STORAGE_ZONE_NAME` - BunnyCDN storage zone name (e.g., "coollabs-fonts")
+- `BUNNY_API_KEY` - BunnyCDN API key for purging cache (optional, but recommended)
+- `BUNNY_CDN_ID` - BunnyCDN pull zone ID for cache purging (e.g., "701712")
