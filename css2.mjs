@@ -45,8 +45,27 @@ export const css2 = (request, reply, data, domain, subsets) => {
             if (axes.includes(",")) {
               // Handle combined axes like ital,wght
               // For ital,wght@0,400;0,700;1,400;1,700
-              // We need to preserve the ital value with the weight
-              weights = valuesList.filter((n) => n);
+              // We need to expand weight ranges and preserve the ital value
+              weights = [];
+              for (const value of valuesList) {
+                if (value.includes(",")) {
+                  const [italValue, weightValue] = value.split(",");
+                  if (weightValue?.includes("..")) {
+                    // Handle weight range (e.g., 200..700)
+                    const [start, end] = weightValue.split("..").map(Number);
+                    const standardWeights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+                    standardWeights.forEach(weight => {
+                      if (weight >= start && weight <= end) {
+                        weights.push(`${italValue},${weight}`);
+                      }
+                    });
+                  } else if (weightValue) {
+                    weights.push(value);
+                  }
+                } else {
+                  weights.push(value);
+                }
+              }
             } else {
               weights = valuesList.filter((n) => n);
             }
@@ -76,10 +95,6 @@ export const css2 = (request, reply, data, domain, subsets) => {
                 if (weight === "1") {
                   style = "italic";
                   weight = "400";
-                }
-                // Handle weight ranges that might still be present
-                if (weight.includes("..")) {
-                  continue; // Skip ranges that weren't expanded
                 }
               }
               let css = `

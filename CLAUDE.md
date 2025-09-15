@@ -22,14 +22,13 @@ This is a privacy-friendly Google Fonts replacement service built with Node.js/F
 
 **Main Server (`index.mjs`)**
 - Fastify HTTP server handling font CSS requests
-- Endpoints: `/css`, `/css2`, `/css2-next`, `/icon`
+- Endpoints: `/css`, `/css2`,  `/icon`
 - Redirects root to https://fonts.coollabs.io in production
 - Development-only `/demo` endpoint for testing
 
 **Font CSS Handlers**
 - `css.mjs` - Handles legacy `/css` endpoint (Google Fonts CSS v1 API)
 - `css2.mjs` - Handles `/css2` endpoint (deprecated version)
-- `css2-next.mjs` - Handles `/css2` and `/css2-next` endpoints (Google Fonts CSS v2 API)
 - All handlers parse font family queries, generate @font-face rules, and serve CSS pointing to CDN-hosted fonts
 
 **Font Data Sources**

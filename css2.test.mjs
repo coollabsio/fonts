@@ -432,6 +432,48 @@ describe("Font Loading API Tests", () => {
     }
   });
 
+  test("handles variable font with ital,wght weight ranges (Cascadia Mono case)", async () => {
+    const params = "?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      const localProps = extractFontProperties(results.localCss);
+
+      // Should have expanded to individual weights
+      expect(localProps.weights.has("200")).toBe(true);
+      expect(localProps.weights.has("300")).toBe(true);
+      expect(localProps.weights.has("400")).toBe(true);
+      expect(localProps.weights.has("500")).toBe(true);
+      expect(localProps.weights.has("600")).toBe(true);
+      expect(localProps.weights.has("700")).toBe(true);
+
+      // Should NOT have weights outside the range
+      expect(localProps.weights.has("100")).toBe(false);
+      expect(localProps.weights.has("800")).toBe(false);
+      expect(localProps.weights.has("900")).toBe(false);
+
+      // Should have both normal and italic styles
+      expect(localProps.styles.has("normal")).toBe(true);
+      expect(localProps.styles.has("italic")).toBe(true);
+
+      // Should have display swap
+      expect(localProps.displayValue).toBe("swap");
+
+      // Should NOT have weight ranges in the output
+      expect(results.localCss).not.toContain("font-weight: 200..700");
+
+      // Should have individual weight values
+      expect(results.localCss).toContain("font-weight: 200");
+      expect(results.localCss).toContain("font-weight: 700");
+
+      // Should have proper URLs for individual weights
+      expect(results.localCss).toContain("/cascadia-mono/normal/200.woff2");
+      expect(results.localCss).toContain("/cascadia-mono/normal/700.woff2");
+      expect(results.localCss).toContain("/cascadia-mono/italic/200.woff2");
+      expect(results.localCss).toContain("/cascadia-mono/italic/700.woff2");
+    }
+  });
+
   test("compares URL structure", async () => {
     const params = "?family=Roboto:wght@400";
     const results = await compareFontResponses(params);
