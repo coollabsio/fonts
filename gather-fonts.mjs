@@ -11,6 +11,8 @@ const MAX_RETRIES = 3;
 const RETRY_DELAYS = [1000, 2000, 4000];
 const VERSION_CACHE_FILE = "./font-versions-cache.json";
 const GOOGLE_FONTS_API = "https://www.googleapis.com/webfonts/v1/webfonts";
+const BUNNY_CDN_API = "https://api.bunny.net";
+const BUNNY_CDN_ID = "701712";
 
 const storageZoneName = "coollabs-fonts";
 const pipeline = promisify(stream.pipeline);
@@ -62,7 +64,10 @@ function logProgress(message = null) {
 
 async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
   try {
-    const response = await got.get(url, options);
+    const method = options.method || 'GET';
+    const response = method === 'GET'
+      ? await got.get(url, options)
+      : await got(url, options);
     return options.responseType === 'json' ? response.body : response;
   } catch (error) {
     if (retries > 0) {
@@ -341,6 +346,34 @@ async function generateSubsets(fonts) {
   return allSubsets;
 }
 
+async function purgeBunnyCDNCache() {
+  if (!process.env.BUNNY_API_KEY) {
+    console.log('Warning: BUNNY_API_KEY not found, skipping CDN cache purge');
+    return false;
+  }
+
+  try {
+    console.log('\n=== Purging BunnyCDN Cache ===');
+
+    const purgeUrl = `${BUNNY_CDN_API}/pullzone/${BUNNY_CDN_ID}/purgeCache`;
+    const response = await fetchWithRetry(purgeUrl, {
+      method: 'POST',
+      headers: {
+        'AccessKey': process.env.BUNNY_API_KEY,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      json: {},
+      responseType: 'json'
+    });
+    console.log(`✓ Successfully purged BunnyCDN cache for ${BUNNY_CDN_ID} zone`);
+    return true;
+  } catch (error) {
+    console.error('✗ Failed to purge BunnyCDN cache:', error.message);
+    return false;
+  }
+}
+
 async function retryFailedUploads() {
   if (failedUploads.length === 0) return;
 
@@ -395,7 +428,9 @@ async function retryFailedUploads() {
 
 async function main() {
   console.log('Starting Google Fonts gathering with version tracking...');
-  console.log(`API Key: ${process.env.GOOGLE_FONTS_API_KEY ? 'Configured' : 'Missing!'}`);
+  console.log(`Google Fonts API Key: ${process.env.GOOGLE_FONTS_API_KEY ? 'Configured' : 'Missing!'}`);
+  console.log(`Bunny Storage API Key: ${process.env.BUNNY_STORAGE_API_KEY ? 'Configured' : 'Missing!'}`);
+  console.log(`Bunny CDN API Key: ${process.env.BUNNY_API_KEY ? 'Configured' : 'Missing (purge will be skipped)'}`);
 
   if (!process.env.GOOGLE_FONTS_API_KEY) {
     console.error('Error: GOOGLE_FONTS_API_KEY not found in .env file');
@@ -442,6 +477,9 @@ async function main() {
 
   // Retry failed uploads
   await retryFailedUploads();
+
+  // Purge CDN cache
+  await purgeBunnyCDNCache();
 
   // Final statistics
   const totalTime = Math.floor((Date.now() - startTime) / 1000);
