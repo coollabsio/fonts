@@ -1,3 +1,5 @@
+const STANDARD_WEIGHTS = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+
 export const css2 = (request, reply, data, domain, subsets) => {
   try {
     let { family: families, display, text } = request.query;
@@ -27,12 +29,13 @@ export const css2 = (request, reply, data, domain, subsets) => {
               if (spec.includes("..")) {
                 // Handle weight range (e.g., 100..900)
                 const [start, end] = spec.split("..").map(Number);
-                const standardWeights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
-                standardWeights.forEach(weight => {
+
+                STANDARD_WEIGHTS.forEach(weight => {
                   if (weight >= start && weight <= end) {
                     weights.push(weight.toString());
                   }
                 });
+
               } else {
                 weights.push(spec);
               }
@@ -46,17 +49,24 @@ export const css2 = (request, reply, data, domain, subsets) => {
               // Handle combined axes like ital,wght
               // For ital,wght@0,400;0,700;1,400;1,700
               // We need to expand weight ranges and preserve the ital value
+
+              // Get index of ital and wght axes, ignore all others.
+              // Ignore other axes, see https://github.com/googlefonts/axisregistry for all options
+              const axisNameToIndex = Object.fromEntries(axes.split(",").map((name, idx)=> ([name, idx])));
               weights = [];
+
               for (const value of valuesList) {
                 if (value.includes(",")) {
-                  const [italValue, weightValue] = value.split(",");
+                  const axisValues = value.split(",");
+                  const italValue = axisValues[axisNameToIndex.ital];
+                  const weightValue = axisValues[axisNameToIndex.wght];
+
                   if (weightValue?.includes("..")) {
                     // Handle weight range (e.g., 200..700)
                     const [start, end] = weightValue.split("..").map(Number);
-                    const standardWeights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
-                    standardWeights.forEach(weight => {
+                    STANDARD_WEIGHTS.forEach(weight => {
                       if (weight >= start && weight <= end) {
-                        weights.push(`${italValue},${weight}`);
+                        weights.push(italValue ? `${italValue},${weight}` : `${weight}`);
                       }
                     });
                   } else if (weightValue) {
