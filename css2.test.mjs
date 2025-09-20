@@ -64,9 +64,11 @@ describe("Font Loading API Tests", () => {
     }
 
     // Extract weights
-    const weightMatches = css.matchAll(/font-weight:\s*(\d+)/g);
+    const weightMatches = css.matchAll(/font-weight:(.*);/g);
     for (const match of weightMatches) {
-      properties.weights.add(match[1]);
+      // Match all numbers in `font-weight: 200 1000;` syntax (Google)
+      const weightMatches = match[1].matchAll(/\d+/g);
+      weightMatches.forEach((match) => properties.weights.add(match[0]));
     }
 
     // Extract styles
@@ -397,6 +399,34 @@ describe("Font Loading API Tests", () => {
       // Should have both styles
       expect(localProps.styles.has("normal")).toBe(true);
       expect(localProps.styles.has("italic")).toBe(true);
+    }
+  });
+
+  test("handles font with weights, styles and other axes", async () => {
+    const params = "?family=Nunito+Sans:ital,opsz,wdth,wght,YTLC@0,6..12,75..125,200..1000,440..540;1,6..12,75..125,200..1000,440..540";
+    const results = await compareFontResponses(params);
+
+    if (results.localCss) {
+      const localProps = extractFontProperties(results.localCss);
+
+      expect(localProps.families.has("Nunito Sans")).toBe(true);
+      ["200", "300", "400", "500", "600", "700", "800", "900"].forEach(weight => {
+        expect(localProps.weights.has(weight)).toBe(true);
+      });
+      expect(localProps.styles.has("normal")).toBe(true);
+      expect(localProps.styles.has("italic")).toBe(true);
+    }
+
+    if (results.googleCss) {
+      const googleProps = extractFontProperties(results.googleCss);
+      expect(googleProps.families.has("Nunito Sans")).toBe(true);
+
+      // NOTE Google uses `font-weight: 200 1000;` syntax
+      expect(googleProps.weights.has("200")).toBe(true);
+      expect(googleProps.weights.has("1000")).toBe(true);
+
+      expect(googleProps.styles.has("normal")).toBe(true);
+      expect(googleProps.styles.has("italic")).toBe(true);
     }
   });
 
