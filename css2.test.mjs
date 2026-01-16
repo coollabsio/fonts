@@ -466,11 +466,11 @@ describe("Font Loading API Tests", () => {
       expect(results.localCss).toContain("font-weight: 200");
       expect(results.localCss).toContain("font-weight: 700");
 
-      // Should have proper URLs for individual weights
-      expect(results.localCss).toContain("/cascadia-mono/normal/200.woff2");
-      expect(results.localCss).toContain("/cascadia-mono/normal/700.woff2");
-      expect(results.localCss).toContain("/cascadia-mono/italic/200.woff2");
-      expect(results.localCss).toContain("/cascadia-mono/italic/700.woff2");
+      // Should have proper URLs for individual weights (with subset suffix)
+      expect(results.localCss).toMatch(/\/cascadia-mono\/normal\/200-[a-z-]+\.woff2/);
+      expect(results.localCss).toMatch(/\/cascadia-mono\/normal\/700-[a-z-]+\.woff2/);
+      expect(results.localCss).toMatch(/\/cascadia-mono\/italic\/200-[a-z-]+\.woff2/);
+      expect(results.localCss).toMatch(/\/cascadia-mono\/italic\/700-[a-z-]+\.woff2/);
     }
   });
 
@@ -479,8 +479,8 @@ describe("Font Loading API Tests", () => {
     const results = await compareFontResponses(params);
 
     if (results.localCss) {
-      // Check our CDN URL structure
-      expect(results.localCss).toMatch(/https:\/\/cdn\.fonts\.coollabs\.io\/[^/]+\/[^/]+\/\d+\.woff2/);
+      // Check our CDN URL structure (with subset suffix: weight-subset.woff2)
+      expect(results.localCss).toMatch(/https:\/\/cdn\.fonts\.coollabs\.io\/[^/]+\/[^/]+\/\d+-[a-z-]+\.woff2/);
     }
 
     if (results.googleCss) {

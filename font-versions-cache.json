@@ -1,101 +1,4 @@
 {
-  "Roboto": {
-    "version": "v49",
-    "lastModified": "2025-09-08",
-    "variants": {
-      "100": {
-        "weight": "100",
-        "style": "normal",
-        "uploaded": true
-      },
-      "200": {
-        "weight": "200",
-        "style": "normal",
-        "uploaded": true
-      },
-      "300": {
-        "weight": "300",
-        "style": "normal",
-        "uploaded": true
-      },
-      "500": {
-        "weight": "500",
-        "style": "normal",
-        "uploaded": true
-      },
-      "600": {
-        "weight": "600",
-        "style": "normal",
-        "uploaded": true
-      },
-      "700": {
-        "weight": "700",
-        "style": "normal",
-        "uploaded": true
-      },
-      "800": {
-        "weight": "800",
-        "style": "normal",
-        "uploaded": true
-      },
-      "900": {
-        "weight": "900",
-        "style": "normal",
-        "uploaded": true
-      },
-      "regular": {
-        "weight": "400",
-        "style": "normal",
-        "uploaded": true
-      },
-      "100italic": {
-        "weight": "100",
-        "style": "italic",
-        "uploaded": true
-      },
-      "italic": {
-        "weight": "400",
-        "style": "italic",
-        "uploaded": true
-      },
-      "200italic": {
-        "weight": "200",
-        "style": "italic",
-        "uploaded": true
-      },
-      "300italic": {
-        "weight": "300",
-        "style": "italic",
-        "uploaded": true
-      },
-      "500italic": {
-        "weight": "500",
-        "style": "italic",
-        "uploaded": true
-      },
-      "600italic": {
-        "weight": "600",
-        "style": "italic",
-        "uploaded": true
-      },
-      "700italic": {
-        "weight": "700",
-        "style": "italic",
-        "uploaded": true
-      },
-      "900italic": {
-        "weight": "900",
-        "style": "italic",
-        "uploaded": true
-      },
-      "800italic": {
-        "weight": "800",
-        "style": "italic",
-        "uploaded": true
-      }
-    },
-    "lastUploaded": "2025-09-14T13:16:47.721Z"
-  },
   "Open Sans": {
     "version": "v43",
     "lastModified": "2025-05-29",
@@ -49633,5 +49536,282 @@
       }
     },
     "lastUploaded": "2025-09-14T13:26:19.647Z"
+  },
+  "Roboto": {
+    "version": "v50",
+    "lastModified": "2025-11-18",
+    "variants": {
+      "100": {
+        "weight": "100",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "200": {
+        "weight": "200",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "300": {
+        "weight": "300",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "500": {
+        "weight": "500",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "600": {
+        "weight": "600",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "700": {
+        "weight": "700",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "800": {
+        "weight": "800",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "900": {
+        "weight": "900",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "regular": {
+        "weight": "400",
+        "style": "normal",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "100italic": {
+        "weight": "100",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "200italic": {
+        "weight": "200",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "300italic": {
+        "weight": "300",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "italic": {
+        "weight": "400",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "500italic": {
+        "weight": "500",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "600italic": {
+        "weight": "600",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "700italic": {
+        "weight": "700",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "800italic": {
+        "weight": "800",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "900italic": {
+        "weight": "900",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      }
+    },
+    "lastUploaded": "2026-01-16T16:23:18.650Z"
   }
 }

@@ -116,7 +116,7 @@ function parseVariant(variant) {
   return { weight, style };
 }
 
-async function getWoff2Url(family, variant) {
+async function getWoff2UrlsForAllSubsets(family, variant) {
   // Parse variant to determine weight and style
   let weight = "400";
   let style = "normal";
@@ -141,6 +141,8 @@ async function getWoff2Url(family, variant) {
     url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}`;
   }
 
+  const subsetUrls = [];
+
   try {
     const response = await fetchWithRetry(url, {
       headers: {
@@ -151,24 +153,33 @@ async function getWoff2Url(family, variant) {
 
     const parsedCss = css.parse(response.body);
 
-    // Get the first WOFF2 URL from the CSS (latin subset typically)
+    // Extract all subset URLs from the CSS
+    // Google's CSS has comments like /* latin */ before each @font-face
+    let currentSubset = null;
+
     for (const rule of parsedCss.stylesheet.rules) {
-      if (rule.type === "font-face") {
+      if (rule.type === "comment") {
+        currentSubset = rule.comment.trim();
+      } else if (rule.type === "font-face") {
         const styleDecl = rule.declarations.find(d => d.property === "font-style");
         const weightDecl = rule.declarations.find(d => d.property === "font-weight");
 
-        // Check if this rule matches our requested variant
         if (styleDecl && weightDecl) {
           const ruleStyle = styleDecl.value;
           const ruleWeight = weightDecl.value;
 
           if (ruleStyle === style && ruleWeight === weight) {
             const srcDeclaration = rule.declarations.find(d => d.property === "src");
-            if (srcDeclaration) {
+            if (srcDeclaration && currentSubset) {
               const match = srcDeclaration.value.match(/url\(([^)]+)\)/);
               if (match) {
-                // Remove quotes if present
-                return match[1].replace(/['"]/g, '');
+                const fontUrl = match[1].replace(/['"]/g, '');
+                subsetUrls.push({
+                  subset: currentSubset,
+                  url: fontUrl,
+                  weight,
+                  style
+                });
               }
             }
           }
@@ -176,10 +187,10 @@ async function getWoff2Url(family, variant) {
       }
     }
   } catch (error) {
-    console.error(`Failed to get WOFF2 URL for ${family} ${variant}:`, error.message);
+    console.error(`Failed to get WOFF2 URLs for ${family} ${variant}:`, error.message);
   }
 
-  return null;
+  return subsetUrls;
 }
 
 async function processFont(fontData, versionCache) {
@@ -199,81 +210,87 @@ async function processFont(fontData, versionCache) {
   updatedFonts++;
 
   const variantData = {};
-  const variantsToProcess = [];
-
-  // Prepare variants for processing
-  for (const variant of variants) {
-    const { weight, style } = parseVariant(variant);
-    variantsToProcess.push({ variant, weight, style });
-    totalVariants++;
-  }
 
   // Process all variants
-  await Promise.all(
-    variantsToProcess.map(({ variant, weight, style }) =>
-      limit(async () => {
-        try {
-          // Get WOFF2 URL from Google Fonts CSS API
-          const woff2Url = await getWoff2Url(family, variant);
+  for (const variant of variants) {
+    const { weight, style } = parseVariant(variant);
 
-          if (!woff2Url) {
-            console.error(`No WOFF2 URL found for ${family} ${variant}`);
-            failedUploads.push({ family, variant, weight, style, reason: "No WOFF2 URL" });
-            processedVariants++;
-            logProgress();
-            return;
-          }
+    try {
+      // Get WOFF2 URLs for all subsets from Google Fonts CSS API
+      const subsetUrls = await getWoff2UrlsForAllSubsets(family, variant);
 
-          // Upload to BunnyCDN
-          const dir = `${normalizedFamily}/${style}`;
-          const bunnyUrl = `https://storage.bunnycdn.com/${process.env.BUNNY_STORAGE_ZONE_NAME}/${dir}/${weight}.woff2`;
+      if (subsetUrls.length === 0) {
+        console.error(`No WOFF2 URLs found for ${family} ${variant}`);
+        failedUploads.push({ family, variant, weight, style, reason: "No WOFF2 URLs" });
+        continue;
+      }
 
-          await pipeline(
-            got.stream(woff2Url, {
-              headers: {
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-              },
-              retry: { limit: MAX_RETRIES }
-            }),
-            got.stream.put(bunnyUrl, {
-              headers: {
-                AccessKey: process.env.BUNNY_STORAGE_API_KEY,
-              },
-              retry: { limit: MAX_RETRIES }
-            }),
-            new stream.PassThrough()
-          );
+      totalVariants += subsetUrls.length;
+      logProgress();
 
-          variantData[variant] = { weight, style, uploaded: true };
-          processedVariants++;
-          logProgress();
+      // Upload each subset in parallel (with concurrency limit)
+      await Promise.all(
+        subsetUrls.map(({ subset, url }) =>
+          limit(async () => {
+            try {
+              // Upload to BunnyCDN with subset in filename
+              const dir = `${normalizedFamily}/${style}`;
+              const bunnyUrl = `https://storage.bunnycdn.com/${process.env.BUNNY_STORAGE_ZONE_NAME}/${dir}/${weight}-${subset}.woff2`;
 
-        } catch (err) {
-          console.error(`\nError processing ${family}/${style}/${weight}:`, err.message);
+              await pipeline(
+                got.stream(url, {
+                  headers: {
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                  },
+                  retry: { limit: MAX_RETRIES }
+                }),
+                got.stream.put(bunnyUrl, {
+                  headers: {
+                    AccessKey: process.env.BUNNY_STORAGE_API_KEY,
+                  },
+                  retry: { limit: MAX_RETRIES }
+                }),
+                new stream.PassThrough()
+              );
 
-          failedUploads.push({
-            family,
-            variant,
-            weight,
-            style,
-            error: err.message
-          });
+              processedVariants++;
+              logProgress();
 
-          // Check if rate limited
-          if (err.response?.statusCode === 429 || err.message.includes('rate limit')) {
-            console.log('Rate limit detected, waiting 5 seconds...');
-            await new Promise(resolve => setTimeout(resolve, 5000));
-          } else if (err.message.includes('Unable to connect')) {
-            console.log('Connection issue detected, waiting 2 seconds...');
-            await new Promise(resolve => setTimeout(resolve, 2000));
-          }
+            } catch (err) {
+              console.error(`\nError uploading ${family}/${style}/${weight}-${subset}:`, err.message);
 
-          processedVariants++;
-          logProgress();
-        }
-      })
-    )
-  );
+              failedUploads.push({
+                family,
+                variant,
+                weight,
+                style,
+                subset,
+                error: err.message
+              });
+
+              // Check if rate limited
+              if (err.response?.statusCode === 429 || err.message.includes('rate limit')) {
+                console.log('Rate limit detected, waiting 5 seconds...');
+                await new Promise(resolve => setTimeout(resolve, 5000));
+              } else if (err.message.includes('Unable to connect')) {
+                console.log('Connection issue detected, waiting 2 seconds...');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+              }
+
+              processedVariants++;
+              logProgress();
+            }
+          })
+        )
+      );
+
+      variantData[variant] = { weight, style, subsets: subsetUrls.map(s => s.subset) };
+
+    } catch (err) {
+      console.error(`\nError processing ${family}/${style}/${weight}:`, err.message);
+      failedUploads.push({ family, variant, weight, style, error: err.message });
+    }
+  }
 
   // Update cache for this font
   versionCache[family] = {
@@ -434,7 +451,16 @@ async function retryFailedUploads() {
 }
 
 async function main() {
+  // Parse command line arguments for single font testing
+  const args = process.argv.slice(2);
+  const fontNameArg = args.find(arg => arg.startsWith('--font='));
+  const singleFontName = fontNameArg ? fontNameArg.split('=')[1] : null;
+  const skipCache = args.includes('--skip-cache');
+
   console.log('Starting Google Fonts gathering with version tracking...');
+  if (singleFontName) {
+    console.log(`\n*** Single font mode: ${singleFontName} ***\n`);
+  }
   console.log(`Google Fonts API Key: ${process.env.GOOGLE_FONTS_API_KEY ? 'Configured' : 'Missing!'}`);
   console.log(`Bunny Storage API Key: ${process.env.BUNNY_STORAGE_API_KEY ? 'Configured' : 'Missing!'}`);
   console.log(`Bunny Storage Zone: ${process.env.BUNNY_STORAGE_ZONE_NAME || 'Missing!'}`);
@@ -459,14 +485,29 @@ async function main() {
   startTime = Date.now();
 
   // Load version cache
-  const versionCache = await loadVersionCache();
+  let versionCache = await loadVersionCache();
   console.log(`Loaded version cache with ${Object.keys(versionCache).length} fonts`);
+
+  // If skip-cache flag is set with single font, remove it from cache
+  if (skipCache && singleFontName) {
+    delete versionCache[singleFontName];
+    console.log(`Cleared cache for ${singleFontName}`);
+  }
 
   // Fetch all fonts from Google Fonts API
   console.log('\nFetching font list from Google Fonts API...');
   const apiUrl = `${GOOGLE_FONTS_API}?key=${process.env.GOOGLE_FONTS_API_KEY}&sort=popularity`;
   const response = await fetchWithRetry(apiUrl, { responseType: 'json' });
-  const fonts = response.items;
+  let fonts = response.items;
+
+  // Filter to single font if specified
+  if (singleFontName) {
+    fonts = fonts.filter(f => f.family.toLowerCase() === singleFontName.toLowerCase());
+    if (fonts.length === 0) {
+      console.error(`Error: Font "${singleFontName}" not found in Google Fonts`);
+      process.exit(1);
+    }
+  }
 
   totalFonts = fonts.length;
   console.log(`Found ${totalFonts} font families to process`);
@@ -485,9 +526,11 @@ async function main() {
   // Save final cache
   await saveVersionCache(versionCache);
 
-  // Generate subsets
-  const subsets = await generateSubsets(fonts);
-  await fs.writeFile("./subsets.json", JSON.stringify(subsets, null, 2));
+  // Generate subsets (skip if single font mode)
+  if (!singleFontName) {
+    const subsets = await generateSubsets(fonts);
+    await fs.writeFile("./subsets.json", JSON.stringify(subsets, null, 2));
+  }
 
   // Retry failed uploads
   await retryFailedUploads();

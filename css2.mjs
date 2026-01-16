@@ -108,7 +108,7 @@ export const css2 = (request, reply, data, domain, subsets) => {
                 css += `
   font-display: ${display};`;
 
-              let url = `https://${domain}/${dashFamily}/${style}/${weight}.woff2`;
+              let url = `https://${domain}/${dashFamily}/${style}/${weight}-${subset}.woff2`;
               if (text) {
                 url += `?text=${encodeURIComponent(text)}`;
               }
@@ -134,7 +134,7 @@ export const css2 = (request, reply, data, domain, subsets) => {
               css += `
   font-display: ${display};`;
 
-            let url = `https://${domain}/${dashFamily}/normal/400.woff2`;
+            let url = `https://${domain}/${dashFamily}/normal/400-${subset}.woff2`;
             if (text) {
               url += `?text=${encodeURIComponent(text)}`;
             }
