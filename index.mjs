@@ -25,8 +25,9 @@ server.register(staticPlugin, {
   prefix: '/', // optional: default '/'
 });
 
-// Load only subsets data - no external font list needed
+// Load subsets data and font versions cache
 const subsets = JSON.parse(await fs.readFile("./subsets.json", "utf8"));
+const fontCache = JSON.parse(await fs.readFile("./font-versions-cache.json", "utf8"));
 server.get("/", (response, reply) => {
   if (process.env.NODE_ENV === "development") {
     return reply.code(200).send("Hello from DEV.");
@@ -65,7 +66,7 @@ server.get("/css", async (request, reply) => {
   return css(request, reply, null, domain, subsets);
 });
 server.get("/css2", async (request, reply) => {
-  return css2(request, reply, null, domain, subsets);
+  return css2(request, reply, null, domain, subsets, fontCache);
 });
 if (process.env.NODE_ENV === "development") {
   server.get("/demo", async (request, reply) => {

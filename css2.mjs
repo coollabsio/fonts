@@ -1,4 +1,4 @@
-export const css2 = (request, reply, data, domain, subsets) => {
+export const css2 = (request, reply, data, domain, subsets, fontCache = {}) => {
   try {
     let { family: families, display, text } = request.query;
     if (families) {
@@ -43,13 +43,21 @@ export const css2 = (request, reply, data, domain, subsets) => {
             const valuesList = values.split(";");
 
             if (axes.includes(",")) {
-              // Handle combined axes like ital,wght
-              // For ital,wght@0,400;0,700;1,400;1,700
-              // We need to expand weight ranges and preserve the ital value
+              // Handle combined axes like ital,wght or ital,opsz,wght
+              // Parse axis names dynamically to support any number of axes
+              const axisNames = axes.split(",");
+              const italIndex = axisNames.indexOf("ital");
+              const wghtIndex = axisNames.indexOf("wght");
+
               weights = [];
               for (const value of valuesList) {
                 if (value.includes(",")) {
-                  const [italValue, weightValue] = value.split(",");
+                  const axisValues = value.split(",");
+                  // Get ital value (default to "0" if not present)
+                  const italValue = italIndex >= 0 ? axisValues[italIndex] : "0";
+                  // Get weight value (default to "400" if not present)
+                  const weightValue = wghtIndex >= 0 ? axisValues[wghtIndex] : "400";
+
                   if (weightValue?.includes("..")) {
                     // Handle weight range (e.g., 200..700)
                     const [start, end] = weightValue.split("..").map(Number);
@@ -60,7 +68,7 @@ export const css2 = (request, reply, data, domain, subsets) => {
                       }
                     });
                   } else if (weightValue) {
-                    weights.push(value);
+                    weights.push(`${italValue},${weightValue}`);
                   }
                 } else {
                   weights.push(value);
@@ -78,8 +86,8 @@ export const css2 = (request, reply, data, domain, subsets) => {
           dashFamily = 'source-sans-3';
         }
 
-        // Get default subsets for the font
-        const fontSubsets = getDefaultSubsets(dashFamily);
+        // Get subsets for the font from cache or fallback to defaults
+        const fontSubsets = getSubsetsFromCache(family, dashFamily, fontCache);
 
         if (weights && weights.length > 0) {
           for (let weight of weights) {
@@ -156,6 +164,23 @@ export const css2 = (request, reply, data, domain, subsets) => {
     throw { statusCode: 500, message: error.message };
   }
 };
+
+function getSubsetsFromCache(family, dashFamily, fontCache) {
+  // Try to find font in cache by original family name
+  const cacheEntry = fontCache[family];
+
+  if (cacheEntry && cacheEntry.variants) {
+    // Get subsets from the first variant that has them
+    for (const variant of Object.values(cacheEntry.variants)) {
+      if (variant.subsets && Array.isArray(variant.subsets) && variant.subsets.length > 0) {
+        return variant.subsets;
+      }
+    }
+  }
+
+  // Fall back to hardcoded defaults if no subsets in cache
+  return getDefaultSubsets(dashFamily);
+}
 
 function getDefaultSubsets(dashFamily) {
   // Return common subsets for most fonts

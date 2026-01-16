@@ -498,4 +498,31 @@ describe("Font Loading API Tests", () => {
     const response = await fetch(`${LOCAL_URL}?family=`);
     expect(response.status).toBe(500);
   });
+
+  test("uses subsets from font cache when available", async () => {
+    // Open Sans has subsets in the cache
+    const params = "?family=Open+Sans";
+    const response = await fetch(`${LOCAL_URL}${params}`);
+    const css = await response.text();
+    const props = extractFontProperties(css);
+
+    // Open Sans has hebrew, math, symbols in addition to common subsets
+    expect(props.subsets.has("latin")).toBe(true);
+    expect(props.subsets.has("hebrew")).toBe(true);
+    expect(props.subsets.has("math")).toBe(true);
+    expect(props.subsets.has("symbols")).toBe(true);
+  });
+
+  test("falls back to default subsets for fonts not in cache or without subset data", async () => {
+    // Road Rage has old cache format without subsets array
+    // Should fall back to default subsets until cache is updated
+    const params = "?family=Road+Rage";
+    const response = await fetch(`${LOCAL_URL}${params}`);
+    const css = await response.text();
+    const props = extractFontProperties(css);
+
+    // Should have some subsets (either from cache or defaults)
+    expect(props.subsets.size).toBeGreaterThan(0);
+    expect(props.subsets.has("latin")).toBe(true);
+  });
 });

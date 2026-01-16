@@ -1,122 +1,299 @@
 {
   "Open Sans": {
-    "version": "v43",
-    "lastModified": "2025-05-29",
+    "version": "v44",
+    "lastModified": "2025-09-16",
     "variants": {
       "300": {
         "weight": "300",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "500": {
         "weight": "500",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "600": {
         "weight": "600",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "700": {
         "weight": "700",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "800": {
         "weight": "800",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "regular": {
         "weight": "400",
         "style": "normal",
-        "uploaded": true
-      },
-      "italic": {
-        "weight": "400",
-        "style": "italic",
-        "uploaded": true
-      },
-      "500italic": {
-        "weight": "500",
-        "style": "italic",
-        "uploaded": true
-      },
-      "600italic": {
-        "weight": "600",
-        "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "300italic": {
         "weight": "300",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "italic": {
+        "weight": "400",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "500italic": {
+        "weight": "500",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "600italic": {
+        "weight": "600",
+        "style": "italic",
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "700italic": {
         "weight": "700",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "800italic": {
         "weight": "800",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "cyrillic-ext",
+          "cyrillic",
+          "greek-ext",
+          "greek",
+          "hebrew",
+          "math",
+          "symbols",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       }
     },
-    "lastUploaded": "2025-09-14T13:16:48.134Z"
+    "lastUploaded": "2026-01-16T16:32:58.947Z"
   },
   "Noto Sans JP": {
-    "version": "v55",
-    "lastModified": "2025-09-05",
+    "version": "v56",
+    "lastModified": "2026-01-07",
     "variants": {
       "100": {
         "weight": "100",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "200": {
         "weight": "200",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "300": {
         "weight": "300",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "500": {
         "weight": "500",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "600": {
         "weight": "600",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "700": {
         "weight": "700",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "800": {
         "weight": "800",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "900": {
         "weight": "900",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       },
       "regular": {
         "weight": "400",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "cyrillic",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
       }
     },
-    "lastUploaded": "2025-09-14T13:16:48.626Z"
+    "lastUploaded": "2026-01-16T16:33:07.219Z"
   },
   "Montserrat": {
     "version": "v31",
@@ -313,170 +490,274 @@
     "lastUploaded": "2025-09-14T13:16:50.968Z"
   },
   "Poppins": {
-    "version": "v23",
-    "lastModified": "2025-04-23",
+    "version": "v24",
+    "lastModified": "2025-09-16",
     "variants": {
       "100": {
         "weight": "100",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "200": {
         "weight": "200",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "300": {
         "weight": "300",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "500": {
         "weight": "500",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "600": {
         "weight": "600",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "700": {
         "weight": "700",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "800": {
         "weight": "800",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "900": {
         "weight": "900",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "100italic": {
+        "weight": "100",
+        "style": "italic",
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "200italic": {
         "weight": "200",
         "style": "italic",
-        "uploaded": true
-      },
-      "100italic": {
-        "weight": "100",
-        "style": "italic",
-        "uploaded": true
-      },
-      "italic": {
-        "weight": "400",
-        "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "300italic": {
         "weight": "300",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "regular": {
         "weight": "400",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "italic": {
+        "weight": "400",
+        "style": "italic",
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "500italic": {
         "weight": "500",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "600italic": {
         "weight": "600",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "700italic": {
         "weight": "700",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "800italic": {
         "weight": "800",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       },
       "900italic": {
         "weight": "900",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "devanagari",
+          "latin-ext",
+          "latin"
+        ]
       }
     },
-    "lastUploaded": "2025-09-14T13:16:51.535Z"
+    "lastUploaded": "2026-01-16T16:33:09.773Z"
   },
   "Lato": {
-    "version": "v24",
-    "lastModified": "2025-05-30",
+    "version": "v25",
+    "lastModified": "2025-09-16",
     "variants": {
       "100": {
         "weight": "100",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       },
       "300": {
         "weight": "300",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       },
       "700": {
         "weight": "700",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       },
       "900": {
         "weight": "900",
         "style": "normal",
-        "uploaded": true
-      },
-      "300italic": {
-        "weight": "300",
-        "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       },
       "100italic": {
         "weight": "100",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "300italic": {
+        "weight": "300",
+        "style": "italic",
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       },
       "regular": {
         "weight": "400",
         "style": "normal",
-        "uploaded": true
-      },
-      "700italic": {
-        "weight": "700",
-        "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       },
       "italic": {
         "weight": "400",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "700italic": {
+        "weight": "700",
+        "style": "italic",
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       },
       "900italic": {
         "weight": "900",
         "style": "italic",
-        "uploaded": true
+        "subsets": [
+          "latin-ext",
+          "latin"
+        ]
       }
     },
-    "lastUploaded": "2025-09-14T13:16:51.902Z"
+    "lastUploaded": "2026-01-16T16:33:11.096Z"
   },
   "Material Icons": {
-    "version": "v144",
-    "lastModified": "2025-09-08",
+    "version": "v145",
+    "lastModified": "2025-09-17",
     "variants": {
       "regular": {
         "weight": "400",
         "style": "normal",
-        "uploaded": true
+        "subsets": [
+          "fallback"
+        ]
       }
     },
-    "lastUploaded": "2025-09-14T13:16:52.021Z"
+    "lastUploaded": "2026-01-16T16:33:11.226Z"
   },
   "Roboto Condensed": {
     "version": "v31",
@@ -29169,18 +29450,6 @@
     },
     "lastUploaded": "2025-09-14T13:22:11.043Z"
   },
-  "Road Rage": {
-    "version": "v9",
-    "lastModified": "2025-09-05",
-    "variants": {
-      "regular": {
-        "weight": "400",
-        "style": "normal",
-        "uploaded": true
-      }
-    },
-    "lastUploaded": "2025-09-14T13:22:11.184Z"
-  },
   "Alike Angular": {
     "version": "v27",
     "lastModified": "2025-09-05",
@@ -49813,5 +50082,276 @@
       }
     },
     "lastUploaded": "2026-01-16T16:23:18.650Z"
+  },
+  "Google Sans": {
+    "version": "v67",
+    "lastModified": "2025-12-10",
+    "variants": {
+      "500": {
+        "weight": "500",
+        "style": "normal",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "600": {
+        "weight": "600",
+        "style": "normal",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "700": {
+        "weight": "700",
+        "style": "normal",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "regular": {
+        "weight": "400",
+        "style": "normal",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "italic": {
+        "weight": "400",
+        "style": "italic",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "500italic": {
+        "weight": "500",
+        "style": "italic",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "600italic": {
+        "weight": "600",
+        "style": "italic",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      },
+      "700italic": {
+        "weight": "700",
+        "style": "italic",
+        "subsets": [
+          "armenian",
+          "bengali",
+          "canadian-aboriginal",
+          "cyrillic-ext",
+          "cyrillic",
+          "devanagari",
+          "ethiopic",
+          "georgian",
+          "greek-ext",
+          "greek",
+          "gujarati",
+          "gurmukhi",
+          "hebrew",
+          "khmer",
+          "lao",
+          "malayalam",
+          "oriya",
+          "sinhala",
+          "symbols",
+          "tamil",
+          "telugu",
+          "thai",
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      }
+    },
+    "lastUploaded": "2026-01-16T16:33:05.405Z"
+  },
+  "Road Rage": {
+    "version": "v9",
+    "lastModified": "2025-09-05",
+    "variants": {
+      "regular": {
+        "weight": "400",
+        "style": "normal",
+        "subsets": [
+          "vietnamese",
+          "latin-ext",
+          "latin"
+        ]
+      }
+    },
+    "lastUploaded": "2026-01-16T16:39:36.298Z"
   }
 }
