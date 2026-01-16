@@ -157,6 +157,7 @@ async function getWoff2UrlsForAllSubsets(family, variant) {
     // Google's CSS has comments like /* latin */ before each @font-face
     let currentSubset = null;
 
+    let subsetIndex = 0;
     for (const rule of parsedCss.stylesheet.rules) {
       if (rule.type === "comment") {
         currentSubset = rule.comment.trim();
@@ -170,16 +171,21 @@ async function getWoff2UrlsForAllSubsets(family, variant) {
 
           if (ruleStyle === style && ruleWeight === weight) {
             const srcDeclaration = rule.declarations.find(d => d.property === "src");
-            if (srcDeclaration && currentSubset) {
+            if (srcDeclaration) {
               const match = srcDeclaration.value.match(/url\(([^)]+)\)/);
               if (match) {
                 const fontUrl = match[1].replace(/['"]/g, '');
+                // Use subset comment if available, otherwise generate index-based name
+                const subset = currentSubset || `chunk-${subsetIndex}`;
                 subsetUrls.push({
-                  subset: currentSubset,
+                  subset,
                   url: fontUrl,
                   weight,
                   style
                 });
+                subsetIndex++;
+                // Reset currentSubset after use so next @font-face without comment gets new index
+                currentSubset = null;
               }
             }
           }
@@ -193,13 +199,13 @@ async function getWoff2UrlsForAllSubsets(family, variant) {
   return subsetUrls;
 }
 
-async function processFont(fontData, versionCache) {
+async function processFont(fontData, versionCache, forceUpdate = false) {
   const { family, version, variants, files, lastModified } = fontData;
   const normalizedFamily = normalizeFileName(family);
 
-  // Check if font needs updating
+  // Check if font needs updating (skip if forceUpdate is true)
   const cachedFont = versionCache[family];
-  if (cachedFont && cachedFont.version === version && cachedFont.lastModified === lastModified) {
+  if (!forceUpdate && cachedFont && cachedFont.version === version && cachedFont.lastModified === lastModified) {
     logProgress(`Skipping ${family} (version ${version} already uploaded)`);
     skippedFonts++;
     processedFonts++;
@@ -409,21 +415,23 @@ async function retryFailedUploads() {
     failedUploads.map(upload =>
       retryLimit(async () => {
         try {
-          const { family, variant, weight, style } = upload;
-          console.log(`Retrying ${family}/${style}/${weight}...`);
+          const { family, variant, weight, style, subset } = upload;
+          console.log(`Retrying ${family}/${style}/${weight}-${subset}...`);
 
-          const woff2Url = await getWoff2Url(family, variant);
-          if (!woff2Url) {
-            console.error(`✗ Still no WOFF2 URL for ${family} ${variant}`);
+          const subsetVariants = await getWoff2UrlsForAllSubsets(family, variant);
+          const matchingVariant = subsetVariants.find(v => v.subset === subset);
+          if (!matchingVariant) {
+            console.error(`✗ Subset ${subset} not found for ${family} ${variant}`);
             return;
           }
 
           const normalizedFamily = normalizeFileName(family);
           const dir = `${normalizedFamily}/${style}`;
-          const bunnyUrl = `https://storage.bunnycdn.com/${process.env.BUNNY_STORAGE_ZONE_NAME}/${dir}/${weight}.woff2`;
+          const filename = `${weight}-${subset}.woff2`;
+          const bunnyUrl = `https://storage.bunnycdn.com/${process.env.BUNNY_STORAGE_ZONE_NAME}/${dir}/${filename}`;
 
           await pipeline(
-            got.stream(woff2Url, {
+            got.stream(matchingVariant.url, {
               headers: {
                 "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
               },
@@ -438,10 +446,10 @@ async function retryFailedUploads() {
             new stream.PassThrough()
           );
 
-          console.log(`✓ Successfully uploaded ${family}/${style}/${weight}`);
+          console.log(`✓ Successfully uploaded ${family}/${style}/${weight}-${subset}`);
           successCount++;
         } catch (err) {
-          console.error(`✗ Failed again: ${upload.family}/${upload.style}/${upload.weight}: ${err.message}`);
+          console.error(`✗ Failed again: ${upload.family}/${upload.style}/${upload.weight}-${upload.subset}: ${err.message}`);
         }
       })
     )
@@ -456,10 +464,14 @@ async function main() {
   const fontNameArg = args.find(arg => arg.startsWith('--font='));
   const singleFontName = fontNameArg ? fontNameArg.split('=')[1] : null;
   const skipCache = args.includes('--skip-cache');
+  const forceUpdate = args.includes('--force');
 
   console.log('Starting Google Fonts gathering with version tracking...');
   if (singleFontName) {
     console.log(`\n*** Single font mode: ${singleFontName} ***\n`);
+  }
+  if (forceUpdate) {
+    console.log('*** Force mode: bypassing version cache checks ***\n');
   }
   console.log(`Google Fonts API Key: ${process.env.GOOGLE_FONTS_API_KEY ? 'Configured' : 'Missing!'}`);
   console.log(`Bunny Storage API Key: ${process.env.BUNNY_STORAGE_API_KEY ? 'Configured' : 'Missing!'}`);
@@ -515,7 +527,7 @@ async function main() {
   // Process fonts
   console.log('\nProcessing fonts...');
   for (const font of fonts) {
-    await processFont(font, versionCache);
+    await processFont(font, versionCache, forceUpdate);
 
     // Save cache periodically (every 10 fonts)
     if (processedFonts % 10 === 0) {

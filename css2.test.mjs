@@ -525,4 +525,5 @@ describe("Font Loading API Tests", () => {
     expect(props.subsets.size).toBeGreaterThan(0);
     expect(props.subsets.has("latin")).toBe(true);
   });
+
 });
