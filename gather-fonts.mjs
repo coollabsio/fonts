@@ -4,7 +4,6 @@ import { promisify } from "node:util";
 import stream from "node:stream";
 import css from "css";
 import pLimit from "p-limit";
-import "dotenv/config";
 
 const CONCURRENT_DOWNLOADS = 5;
 const MAX_RETRIES = 3;

@@ -1,5 +1,4 @@
 import fastify from "fastify";
-import "dotenv/config";
 import fs from "fs/promises";
 import etag from "@fastify/etag";
 import staticPlugin from "@fastify/static";
